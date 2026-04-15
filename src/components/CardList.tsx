@@ -179,7 +179,7 @@ const HeroCard = ({
         </div>
         <div className="rounded-2xl bg-white/6 border border-white/8 px-3 py-2.5 text-center">
           <p className="text-white/35 text-[9px] uppercase tracking-wider mb-0.5">Network</p>
-          <p className="text-white font-bold text-[14px]">{detectNetwork(card.card_name)}</p>
+          <p className="text-white font-bold text-[14px]">{card.card_network || detectNetwork(card.card_name)}</p>
         </div>
       </div>
 

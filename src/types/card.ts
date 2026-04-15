@@ -14,6 +14,7 @@ export interface FuelCard {
   image_url: string;
   bg_image_url?: string;
   bg_gradient?: string;
+  seo_card_alias?: string;
   annual_saving: number;
   monthly_saving: number;
   fuel_savings_monthly: number;
