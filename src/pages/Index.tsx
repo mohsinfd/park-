@@ -22,7 +22,7 @@ import {
   CircleDashed,
   FlaskConical,
 } from "lucide-react";
-import challanBanner from "@/assets/challan-banner.svg";
+import challanBanner from "@/assets/challan-banner.jpg";
 import greatCardsLogoWhite from "@/assets/great-cards-logo-white.svg";
 
 // ─── Test Scenarios ───────────────────────────────────────────────────────────
@@ -433,7 +433,7 @@ const Index = () => {
             <Search className="w-5 h-5 text-foreground" />
           </div>
         </div>
-        <img src={challanBanner} alt="Challan Day Live" className="w-full h-52 object-cover object-top" />
+        <img src={challanBanner} alt="Challan Day Live" className="w-full object-cover" />
         <div className="mx-4 -mt-8 relative z-10 rounded-2xl bg-gradient-to-b from-[#1a1a1a] to-[#111] p-4 shadow-xl border border-white/5">
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
