@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Fuel, SlidersHorizontal, MapPin, Briefcase, IndianRupee, Sparkles } from "lucide-react";
+import parkPlusLogoDark from "@/assets/park-plus-logo-dark.svg";
+import greatCardsLogoDark from "@/assets/great-cards-logo-dark.svg";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -159,23 +161,13 @@ const FuelResults = () => {
       <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-md md:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Park+ wordmark (avoids flaky SVG/logo rendering on mobile) */}
-            <div className="flex items-baseline gap-1">
-              <span className="font-extrabold tracking-tight text-[18px] text-foreground">
-                Park
-              </span>
-              <span className="font-extrabold tracking-tight text-[18px] text-primary">
-                +
-              </span>
-            </div>
+            <img src={parkPlusLogoDark} alt="Park+" className="h-6 w-auto object-contain" />
             {/* Divider */}
             <div className="w-px h-5 bg-border" />
             {/* powered by great.cards */}
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground">powered by</span>
-              <span className="text-[12px] font-semibold text-foreground/80">
-                great<span className="text-primary">.</span>cards
-              </span>
+              <img src={greatCardsLogoDark} alt="great.cards" className="h-4 w-auto object-contain opacity-80" />
             </div>
           </div>
 
@@ -268,7 +260,7 @@ const FuelResults = () => {
                 source={trackingSource}
                 onRetry={refetch}
                 onChangeSpend={() => navigate("/calculator")}
-                personalized
+                personalized={Boolean(pincode && inhandIncome)}
               />
             </div>
           </div>
@@ -281,7 +273,7 @@ const FuelResults = () => {
               source={trackingSource}
               onRetry={refetch}
               onChangeSpend={() => navigate("/calculator")}
-              personalized
+              personalized={Boolean(pincode && inhandIncome)}
             />
 
             {/* Mobile filter drawer */}

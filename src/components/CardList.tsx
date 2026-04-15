@@ -54,9 +54,11 @@ const FuelCardItem = ({
       }`}
       style={{ animationDelay: `${index * 80}ms` }}
     >
-      {/* ── Image hero — full width, card face centred on gradient bg ── */}
-      <div className="relative w-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center overflow-hidden"
-           style={{ height: "160px" }}>
+      {/* ── Image hero — full bleed on mobile ── */}
+      <div
+        className="relative w-full bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden"
+        style={{ height: "170px" }}
+      >
 
         {/* Subtle radial glow behind card */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
@@ -65,7 +67,7 @@ const FuelCardItem = ({
           <img
             src={card.image_url}
             alt={card.card_name}
-            className="h-[120px] max-w-[85%] object-contain drop-shadow-xl relative z-10"
+            className="absolute inset-0 w-full h-full object-cover relative z-10"
             onError={(e) => {
               const el = e.currentTarget;
               el.style.display = "none";
@@ -77,7 +79,7 @@ const FuelCardItem = ({
 
         {/* Fallback placeholder — shown if image fails or absent */}
         <div
-          className="h-[110px] w-[175px] rounded-2xl bg-gradient-to-br from-primary/30 to-primary/10 flex flex-col items-center justify-center relative z-10 shadow-lg"
+          className="absolute inset-0 bg-gradient-to-br from-primary/25 to-primary/5 flex flex-col items-center justify-center relative z-10"
           style={{ display: card.image_url ? "none" : "flex" }}
         >
           <span className="text-xs font-bold text-primary/60 tracking-widest uppercase">Credit Card</span>
