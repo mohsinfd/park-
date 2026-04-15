@@ -53,23 +53,14 @@ const HeroCard = ({
     <div
       className="relative rounded-3xl overflow-hidden mb-5 animate-slide-up"
       style={{
-        background: "linear-gradient(150deg, #0c0b1e 0%, #14103a 45%, #0d1628 100%)",
+        background: card.bg_gradient
+          ? card.bg_gradient
+          : "linear-gradient(150deg, #0c0b1e 0%, #14103a 45%, #0d1628 100%)",
         animationDelay: "0ms",
       }}
     >
-      {/* Hero background — card_bg_image blurred into a colour wash */}
-      {card.bg_image_url && (
-        <img
-          src={card.bg_image_url}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 w-full h-full object-cover scale-110"
-          style={{ opacity: 0.35, filter: "blur(28px) saturate(1.6)" }}
-          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-        />
-      )}
-      {/* Dark gradient overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(10,9,28,0.68) 0%, rgba(10,9,28,0.92) 100%)" }} />
+      {/* Dark overlay so text always stays legible over the gradient */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.52) 0%, rgba(0,0,0,0.72) 100%)" }} />
 
       {/* Glow behind card image */}
       <div
