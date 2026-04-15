@@ -167,9 +167,11 @@ async function fetchEligibleCardsDirectly(params: DeepLinkParams): Promise<FuelC
   const result = await res.json();
   console.log("Cards API raw response keys:", Object.keys(result));
 
-  // Handle various response shapes
+  // Handle various response shapes — /cardgenius/cards uses data.cards
   const raw = Array.isArray(result)
     ? result
+    : Array.isArray(result?.data?.cards)
+    ? result.data.cards
     : Array.isArray(result?.data)
     ? result.data
     : Array.isArray(result?.data?.savings)

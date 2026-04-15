@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Fuel, SlidersHorizontal, MapPin, Briefcase, IndianRupee, CheckCircle2 } from "lucide-react";
 import parkPlusLogoDark from "@/assets/park-plus-logo-dark.svg";
+import greatCardsLogoDark from "@/assets/great-cards-logo-dark.svg";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -121,9 +122,11 @@ const FuelResults = () => {
             <div className="w-px h-5 bg-border" />
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] text-muted-foreground">powered by</span>
-              <span className="text-[13px] font-bold tracking-tight" style={{ background: "linear-gradient(135deg, #5B5CF6 0%, #22C55E 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-                great.cards
-              </span>
+              <img
+                src={greatCardsLogoDark}
+                alt="great.cards"
+                className="h-6 w-auto object-contain"
+              />
             </div>
           </div>
 
