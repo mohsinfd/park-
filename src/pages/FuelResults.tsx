@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Fuel, SlidersHorizontal, MapPin, Briefcase, IndianRupee, CheckCircle2 } from "lucide-react";
-import parkPlusLogoDark from "@/assets/park-plus-logo-dark.svg";
-import greatCardsLogoDark from "@/assets/great-cards-logo-dark.svg";
+import parkPlusLogo from "@/assets/park-plus-logo.png";
+import greatCardsLogo from "@/assets/great-cards-logo.png";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -118,12 +118,12 @@ const FuelResults = () => {
       <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-md md:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <img src={parkPlusLogoDark} alt="Park+" className="h-6 w-auto object-contain" />
+            <img src={parkPlusLogo} alt="Park+" className="h-6 w-auto object-contain" />
             <div className="w-px h-5 bg-border" />
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] text-muted-foreground">powered by</span>
               <img
-                src={greatCardsLogoDark}
+                src={greatCardsLogo}
                 alt="great.cards"
                 className="h-6 w-auto object-contain"
               />
