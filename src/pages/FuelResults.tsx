@@ -125,7 +125,7 @@ const FuelResults = () => {
               <img
                 src={greatCardsLogo}
                 alt="great.cards"
-                className="h-6 w-auto object-contain"
+                className="h-4 w-auto object-contain"
               />
             </div>
           </div>

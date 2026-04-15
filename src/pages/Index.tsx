@@ -128,18 +128,22 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
       ))}
     </div>
 
-    {/* Logos — Park+ × great.cards */}
+    {/* Logos — Park+ stacked above great.cards */}
     <div
-      className="flex items-center gap-3 mb-8 z-10"
+      className="flex flex-col items-center gap-2 mb-8 z-10"
       style={{ animation: "text-reveal 0.5s 0.2s ease-out both" }}
     >
       <img src={parkPlusLogo} alt="Park+"
-        className="h-7 w-auto object-contain"
-        style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.8))" }} />
-      <span className="text-white/40 text-lg font-extralight">×</span>
+        className="h-8 w-auto object-contain"
+        style={{ filter: "drop-shadow(0 1px 8px rgba(0,0,0,0.9))" }} />
+      <div className="flex items-center gap-2">
+        <div className="h-px w-8 bg-white/20" />
+        <span className="text-white/40 text-[10px] tracking-widest uppercase">powered by</span>
+        <div className="h-px w-8 bg-white/20" />
+      </div>
       <img src={greatCardsLogo} alt="great.cards"
         className="h-6 w-auto object-contain"
-        style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.8))" }} />
+        style={{ filter: "drop-shadow(0 1px 8px rgba(0,0,0,0.9))" }} />
     </div>
 
     {/* ── Gauge ── */}
@@ -247,16 +251,6 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
       </div>
     </div>
 
-    {/* Bottom powered-by — great.cards logo on mini pill */}
-    <div
-      className="absolute bottom-10 z-10 flex items-center gap-2"
-      style={{ animation: "text-reveal 0.5s 1.9s ease-out both" }}
-    >
-      <span className="text-[10px] text-white/55 tracking-wider uppercase">powered by</span>
-      <div className="px-2 py-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.1)" }}>
-        <img src={greatCardsLogo} alt="great.cards" className="h-3.5 w-auto object-contain" />
-      </div>
-    </div>
   </div>
 );
 
@@ -377,7 +371,7 @@ const bentoItems = [
   { icon: Landmark, label: "Car Loan", color: "text-foreground", bg: "bg-[#f0f0f8]" },
   { icon: ShoppingCart, label: "Store", color: "text-foreground", bg: "bg-[#f0f0f8]" },
   { icon: ShieldCheck, label: "Insurance", color: "text-foreground", bg: "bg-[#f0f0f8]" },
-  { icon: Fuel, label: "Ultimate Fuel Card", color: "text-primary", bg: "bg-primary/10", isScenario: true },
+  { icon: Fuel, label: "Ultimate Fuel Card", color: "text-white", bg: "bg-primary", isScenario: true },
   { icon: Grid2X2, label: "More", color: "text-foreground", bg: "bg-[#f0f0f8]" },
 ];
 
@@ -438,7 +432,7 @@ const Index = () => {
             <Search className="w-5 h-5 text-foreground" />
           </div>
         </div>
-        <img src={challanBanner} alt="Challan Day Live" className="w-full h-52 object-cover" />
+        <img src={challanBanner} alt="Challan Day Live" className="w-full h-52 object-cover object-top" />
         <div className="mx-4 -mt-8 relative z-10 rounded-2xl bg-gradient-to-b from-[#1a1a1a] to-[#111] p-4 shadow-xl border border-white/5">
           <div className="flex items-center justify-center gap-2 mb-2">
             <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
