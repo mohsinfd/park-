@@ -12,6 +12,7 @@ export interface FuelCard {
   card_network: string;
   tracking_url: string;
   image_url: string;
+  bg_image_url?: string;
   annual_saving: number;
   monthly_saving: number;
   fuel_savings_monthly: number;

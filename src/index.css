@@ -249,6 +249,12 @@
   to   { transform: rotate(75deg); }
 }
 
+/* Splash fade-in with 1s delay built into the keyframe timing */
+@keyframes fade-in-splash {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* Speed lines on splash bg */
 @keyframes speed-line {
   0%   { transform: scaleY(0); transform-origin: bottom; opacity: 0; }

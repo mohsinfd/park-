@@ -1,0 +1,16 @@
+<svg width="160" height="48" viewBox="0 0 160 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Park+">
+  <defs>
+    <linearGradient id="pp_g" x1="0" y1="0" x2="160" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#5B5CF6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+  </defs>
+  <rect x="0.5" y="0.5" width="159" height="47" rx="12" fill="rgba(255,255,255,0.0)" stroke="rgba(255,255,255,0.0)"/>
+  <g>
+    <path d="M18 34V14H30.6C36.2 14 39.6 16.9 39.6 22C39.6 27.1 36.2 30 30.6 30H24.6V34H18ZM24.6 25.1H29.9C32.5 25.1 33.9 23.9 33.9 22C33.9 20.1 32.5 18.9 29.9 18.9H24.6V25.1Z" fill="#FFFFFF"/>
+    <path d="M41.7 34V14H53.2C58.7 14 61.9 16.6 61.9 20.9C61.9 23.7 60.3 25.9 57.5 26.8L62.7 34H55.8L51.2 27.5H47.9V34H41.7ZM47.9 23H52.4C54.8 23 56.1 22 56.1 20.4C56.1 18.8 54.8 17.9 52.4 17.9H47.9V23Z" fill="#FFFFFF"/>
+    <path d="M64.2 34L73.2 14H80.2L89.1 34H82.8L81.2 30.3H72L70.5 34H64.2ZM73.9 25.7H79.3L76.6 19.2L73.9 25.7Z" fill="#FFFFFF"/>
+    <path d="M105.8 22.6V14H111.3V22.6H120V28H111.3V36.6H105.8V28H97.1V22.6H105.8Z" fill="url(#pp_g)"/>
+  </g>
+</svg>
+

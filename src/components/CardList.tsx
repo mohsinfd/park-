@@ -1,5 +1,15 @@
 import React from "react";
 import { AlertCircle, ExternalLink, Star, Fuel, ChevronRight, TrendingUp } from "lucide-react";
+
+// Detect payment network from card name
+function detectNetwork(name: string): string {
+  const n = name.toUpperCase();
+  if (n.includes("AMEX") || n.includes("AMERICAN EXPRESS")) return "Amex";
+  if (n.includes("MASTERCARD") || n.includes("MASTER CARD") || n.includes("WORLD")) return "Mastercard";
+  if (n.includes("RUPAY") || n.includes("RU PAY")) return "RuPay";
+  if (n.includes("VISA") || n.includes("SIGNATURE") || n.includes("INFINITE") || n.includes("PLATINUM")) return "Visa";
+  return "Visa"; // safe default for Indian cards
+}
 import { Button } from "@/components/ui/button";
 import { buildTrackingUrl, slugify } from "@/lib/tracking";
 import { useCountUp } from "@/hooks/useCountUp";
@@ -47,6 +57,20 @@ const HeroCard = ({
         animationDelay: "0ms",
       }}
     >
+      {/* Hero background image (card_bg_image from API) */}
+      {card.bg_image_url && (
+        <img
+          src={card.bg_image_url}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: 0.22, mixBlendMode: "luminosity" }}
+          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+        />
+      )}
+      {/* Dark overlay to keep text legible */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(12,11,30,0.55) 0%, rgba(13,22,40,0.85) 100%)" }} />
+
       {/* Glow behind card image */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-72 h-56 pointer-events-none"
@@ -164,7 +188,7 @@ const HeroCard = ({
         </div>
         <div className="rounded-2xl bg-white/6 border border-white/8 px-3 py-2.5 text-center">
           <p className="text-white/35 text-[9px] uppercase tracking-wider mb-0.5">Network</p>
-          <p className="text-white font-bold text-[14px]">{card.card_network || "—"}</p>
+          <p className="text-white font-bold text-[14px]">{detectNetwork(card.card_name)}</p>
         </div>
       </div>
 

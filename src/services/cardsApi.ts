@@ -95,8 +95,8 @@ function normalizeCard(raw: any): FuelCard {
     joining_fee: annualFee,
     card_network: raw.card_type || raw.card_network || "Unknown",
     tracking_url: raw.cg_network_url || raw.network_url || "",
-    // Prefer `image` (card face) — card_bg_image is unreliable, sometimes points to wrong card
     image_url: raw.card_image_url || raw.image || "",
+    bg_image_url: raw.card_bg_image || "",
     annual_saving: annualSaving,
     monthly_saving: raw.total_savings ?? Math.round(annualSaving / 12),
     fuel_savings_monthly: fuelSavingsMonthly,
