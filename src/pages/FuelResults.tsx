@@ -162,14 +162,17 @@ const FuelResults = () => {
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {/* Park+ logo */}
-            <img src={parkPlusLogo} alt="Park+" className="h-7 w-auto object-contain" />
+            <img src={parkPlusLogo} alt="Park+" className="h-7 w-auto object-contain brightness-0 opacity-90" />
             {/* Divider */}
             <div className="w-px h-5 bg-border" />
             {/* great.cards logo — smaller, muted */}
             <div className="flex items-center gap-1.5">
               <span className="text-[10px] text-muted-foreground">powered by</span>
-              <img src={greatCardsLogo} alt="great.cards"
-                   className="h-4 w-auto object-contain opacity-70" />
+              <img
+                src={greatCardsLogo}
+                alt="great.cards"
+                className="h-4 w-auto object-contain brightness-0 opacity-70"
+              />
             </div>
           </div>
 

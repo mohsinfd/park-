@@ -65,7 +65,7 @@ const FuelCardItem = ({
           <img
             src={card.image_url}
             alt={card.card_name}
-            className="h-[120px] w-auto object-contain drop-shadow-xl relative z-10"
+            className="h-[120px] max-w-[85%] object-contain drop-shadow-xl relative z-10"
             onError={(e) => {
               const el = e.currentTarget;
               el.style.display = "none";

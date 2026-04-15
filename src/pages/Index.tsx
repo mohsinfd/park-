@@ -185,17 +185,19 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
           </linearGradient>
         </defs>
 
-        {/* Needle */}
-        <g
-          style={{
-            // SVG transform-origin is inconsistent across browsers unless transformBox is set.
-            // Using the viewBox pivot (100,100) keeps the sweep stable on mobile.
-            transformBox: "fill-box",
-            transformOrigin: "100px 100px",
-            transform: "rotate(-75deg)",
-            animation: "needle-sweep 2.8s cubic-bezier(0.25,0.46,0.45,0.94) 0.35s forwards",
-          }}
-        >
+        {/* Needle (SVG-native animation for mobile WebViews) */}
+        <g transform="rotate(-75 100 100)">
+          <animateTransform
+            attributeName="transform"
+            type="rotate"
+            from="-75 100 100"
+            to="75 100 100"
+            begin="0.35s"
+            dur="2.8s"
+            fill="freeze"
+            calcMode="spline"
+            keySplines="0.25 0.46 0.45 0.94"
+          />
           {/* Tail */}
           <line x1="100" y1="100" x2="100" y2="110"
                 stroke="rgba(255,255,255,0.25)" strokeWidth="2" strokeLinecap="round" />
