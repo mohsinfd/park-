@@ -23,7 +23,7 @@ import {
   FlaskConical,
 } from "lucide-react";
 import challanBanner from "@/assets/challan-banner.jpg";
-import greatCardsLogoWhite from "@/assets/great-cards-logo-white.svg";
+import greatCardsLogoWhite from "@/assets/great_white_logo.svg";
 
 // ─── Test Scenarios ───────────────────────────────────────────────────────────
 
@@ -274,10 +274,9 @@ const ScenarioPicker = ({
         onClick={onClose}
       />
 
-      {/* Sheet — full height */}
-      <div className="fixed inset-x-0 bottom-0 top-0 flex flex-col justify-end z-[90] pointer-events-none">
-      <div className="w-full max-w-md mx-auto pointer-events-auto animate-slide-up-sheet" style={{ height: "92vh" }}>
-        <div className="bg-background rounded-t-[28px] shadow-2xl overflow-hidden h-full flex flex-col">
+      {/* Sheet */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[90] animate-slide-up-sheet" style={{ height: "92dvh" }}>
+        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden">
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-gray-200" />
@@ -357,7 +356,6 @@ const ScenarioPicker = ({
             })}
           </div>
         </div>
-      </div>
       </div>
     </>
   );
