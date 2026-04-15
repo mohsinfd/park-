@@ -57,19 +57,19 @@ const HeroCard = ({
         animationDelay: "0ms",
       }}
     >
-      {/* Hero background image (card_bg_image from API) */}
+      {/* Hero background — card_bg_image blurred into a colour wash */}
       {card.bg_image_url && (
         <img
           src={card.bg_image_url}
           alt=""
           aria-hidden
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: 0.45 }}
+          className="absolute inset-0 w-full h-full object-cover scale-110"
+          style={{ opacity: 0.35, filter: "blur(28px) saturate(1.6)" }}
           onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
         />
       )}
-      {/* Dark gradient overlay — keeps text readable regardless of bg image */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(10,9,28,0.72) 0%, rgba(10,9,28,0.88) 100%)" }} />
+      {/* Dark gradient overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(10,9,28,0.68) 0%, rgba(10,9,28,0.92) 100%)" }} />
 
       {/* Glow behind card image */}
       <div
