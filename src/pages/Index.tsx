@@ -23,7 +23,7 @@ import {
   FlaskConical,
 } from "lucide-react";
 import challanBanner from "@/assets/challan-banner.svg";
-import greatCardsLogo from "@/assets/great-cards-logo.png";
+import greatCardsLogo from "@/assets/great_card_logo.svg";
 import parkPlusLogo from "@/assets/park-plus-logo.png";
 
 // ─── Test Scenarios ───────────────────────────────────────────────────────────

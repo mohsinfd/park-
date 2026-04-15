@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Fuel, SlidersHorizontal, MapPin, Briefcase, IndianRupee, CheckCircle2 } from "lucide-react";
 import parkPlusLogo from "@/assets/park-plus-logo.png";
-import greatCardsLogo from "@/assets/great-cards-logo.png";
+import greatCardsLogo from "@/assets/great_card_logo.svg";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
