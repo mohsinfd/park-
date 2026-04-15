@@ -1,16 +1,14 @@
-import { supabase } from "@/integrations/supabase/client";
-import type { CardApiResponse, EligibleCardsApiResponse, FuelCard, DeepLinkParams } from "@/types/card";
+import type { FuelCard, DeepLinkParams } from "@/types/card";
 
-const UAT_API_KEY = import.meta.env.VITE_BANKKARO_API_KEY as string;
-const IS_DEV = import.meta.env.DEV;
+// In this demo deployment we avoid Supabase entirely and proxy BankKaro via Vercel
+// serverless routes under `/api/partner/*` (so keys never ship to the browser).
 
-// ─── Local dev: call BankKaro API directly via Vite proxy ────────────────────
+// ─── Public: call BankKaro via same-origin proxy routes ─────────────────────
 
 async function getPartnerToken(): Promise<string> {
   const res = await fetch("/api/partner/token", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ "x-api-key": UAT_API_KEY }),
   });
   if (!res.ok) throw new Error(`Token fetch failed: ${res.status}`);
   const data = await res.json();
@@ -187,35 +185,12 @@ async function fetchEligibleCardsDirectly(params: DeepLinkParams): Promise<FuelC
   return raw.map(normalizeCard).sort((a: FuelCard, b: FuelCard) => b.annual_saving - a.annual_saving);
 }
 
-// ─── Production: call via Supabase edge functions ────────────────────────────
-
-async function fetchCardsViaSupabase(fuelSpend: number): Promise<FuelCard[]> {
-  const { data, error } = await supabase.functions.invoke<CardApiResponse>("fuel-calculate", {
-    body: { fuel: fuelSpend },
-  });
-  if (error) throw new Error("Failed to fetch fuel cards. Please try again.");
-  if (!data || data.status !== "success") throw new Error("Invalid response from cards API");
-  return data.data;
-}
-
-async function fetchEligibleCardsViaSupabase(params: DeepLinkParams): Promise<FuelCard[]> {
-  const { data, error } = await supabase.functions.invoke<EligibleCardsApiResponse>("fuel-cards-eligible", {
-    body: params,
-  });
-  if (!error && data?.status === "success") return data.data;
-  // Fallback to fuel-calculate if fuel-cards-eligible not yet deployed
-  console.warn("fuel-cards-eligible unavailable, falling back to fuel-calculate");
-  return fetchCardsViaSupabase(params.fuel);
-}
-
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function fetchFuelCards(monthlyFuelSpend: number = 5000): Promise<FuelCard[]> {
-  if (IS_DEV) return fetchCardsDirectly(monthlyFuelSpend);
-  return fetchCardsViaSupabase(monthlyFuelSpend);
+  return fetchCardsDirectly(monthlyFuelSpend);
 }
 
 export async function fetchEligibleFuelCards(params: DeepLinkParams): Promise<FuelCard[]> {
-  if (IS_DEV) return fetchEligibleCardsDirectly(params);
-  return fetchEligibleCardsViaSupabase(params);
+  return fetchEligibleCardsDirectly(params);
 }

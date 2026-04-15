@@ -16,11 +16,22 @@ const inMemoryStorageAdapter = {
   removeItem: (key: string) => { delete memoryStorage[key]; },
 };
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth: {
-    storage: inMemoryStorageAdapter,
-    persistSession: false,
-    autoRefreshToken: false,
-    detectSessionInUrl: false,
-  }
-});
+type SupabaseClient = ReturnType<typeof createClient<Database>>;
+
+export const supabase: SupabaseClient =
+  SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+    ? createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+        auth: {
+          storage: inMemoryStorageAdapter,
+          persistSession: false,
+          autoRefreshToken: false,
+          detectSessionInUrl: false,
+        },
+      })
+    : ({
+        functions: {
+          invoke: async () => {
+            throw new Error("Supabase is not configured for this deployment.");
+          },
+        },
+      } as unknown as SupabaseClient);
