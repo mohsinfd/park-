@@ -107,11 +107,7 @@ const GAUGE_TICKS = Array.from({ length: 11 }, (_, i) => ({
 
 const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
   <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center overflow-hidden"
-       style={{
-         background: "linear-gradient(160deg, #07070f 0%, #0d0c22 60%, #0f0e28 100%)",
-         animation: "fade-in-splash 0.35s 1s ease-out both",
-         opacity: 0,
-       }}>
+       style={{ background: "linear-gradient(160deg, #07070f 0%, #0d0c22 60%, #0f0e28 100%)" }}>
 
     {/* Background radial glow */}
     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
@@ -132,19 +128,18 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
       ))}
     </div>
 
-    {/* Logos — Park+ × great.cards on frosted pill */}
+    {/* Logos — Park+ × great.cards */}
     <div
-      className="flex items-center gap-2 mb-8 z-10 px-4 py-2 rounded-2xl"
-         style={{
-           animation: "text-reveal 0.5s 0.1s ease-out both",
-           background: "rgba(255,255,255,0.08)",
-           backdropFilter: "blur(8px)",
-           border: "1px solid rgba(255,255,255,0.1)",
-         }}
+      className="flex items-center gap-3 mb-8 z-10"
+      style={{ animation: "text-reveal 0.5s 0.2s ease-out both" }}
     >
-      <img src={parkPlusLogo} alt="Park+" className="h-6 w-auto object-contain" />
-      <span className="text-white/25 text-base font-extralight px-1">×</span>
-      <img src={greatCardsLogo} alt="great.cards" className="h-5 w-auto object-contain" />
+      <img src={parkPlusLogo} alt="Park+"
+        className="h-7 w-auto object-contain"
+        style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.8))" }} />
+      <span className="text-white/40 text-lg font-extralight">×</span>
+      <img src={greatCardsLogo} alt="great.cards"
+        className="h-6 w-auto object-contain"
+        style={{ filter: "drop-shadow(0 1px 6px rgba(0,0,0,0.8))" }} />
     </div>
 
     {/* ── Gauge ── */}
@@ -226,35 +221,38 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
     {/* Text sequence */}
     <div className="text-center mt-24 space-y-2 z-10 px-6">
       <p
-        className="text-white/75 text-xs tracking-[0.25em] uppercase font-semibold"
-        style={{ animation: "text-reveal 0.5s 2.2s ease-out both" }}
+        className="text-white/80 text-xs tracking-[0.25em] uppercase font-semibold"
+        style={{ animation: "text-reveal 0.5s 0.7s ease-out both" }}
       >
         Scanning 93+ cards for
       </p>
       <h2
-        className="text-3xl font-extrabold text-white tracking-tight drop-shadow-lg"
-        style={{ animation: "text-reveal 0.5s 2.6s ease-out both" }}
+        className="text-3xl font-extrabold text-white tracking-tight"
+        style={{
+          animation: "text-reveal 0.5s 1.1s ease-out both",
+          textShadow: "0 2px 20px rgba(0,0,0,0.8)",
+        }}
       >
         YOUR FUEL SPEND
       </h2>
       <div
         className="flex items-center justify-center gap-2 pt-1"
-        style={{ animation: "text-reveal 0.5s 3.0s ease-out both" }}
+        style={{ animation: "text-reveal 0.5s 1.5s ease-out both" }}
       >
-        <div className="h-px w-6 bg-white/20" />
-        <span className="text-[10px] tracking-widest text-white/50 uppercase font-medium">
+        <div className="h-px w-6 bg-white/25" />
+        <span className="text-[10px] tracking-widest text-white/55 uppercase font-medium">
           {targetUrl.split("?")[0]}
         </span>
-        <div className="h-px w-6 bg-white/20" />
+        <div className="h-px w-6 bg-white/25" />
       </div>
     </div>
 
     {/* Bottom powered-by — great.cards logo on mini pill */}
     <div
       className="absolute bottom-10 z-10 flex items-center gap-2"
-      style={{ animation: "text-reveal 0.5s 3.4s ease-out both" }}
+      style={{ animation: "text-reveal 0.5s 1.9s ease-out both" }}
     >
-      <span className="text-[10px] text-white/50 tracking-wider uppercase">powered by</span>
+      <span className="text-[10px] text-white/55 tracking-wider uppercase">powered by</span>
       <div className="px-2 py-0.5 rounded-lg" style={{ background: "rgba(255,255,255,0.1)" }}>
         <img src={greatCardsLogo} alt="great.cards" className="h-3.5 w-auto object-contain" />
       </div>
@@ -412,7 +410,7 @@ const Index = () => {
     setShowSplash(true);
     setTimeout(() => {
       navigate(url);
-    }, 3800);
+    }, 4000);
   };
 
   return (

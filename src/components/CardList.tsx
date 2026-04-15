@@ -64,12 +64,12 @@ const HeroCard = ({
           alt=""
           aria-hidden
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: 0.22, mixBlendMode: "luminosity" }}
+          style={{ opacity: 0.45 }}
           onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
         />
       )}
-      {/* Dark overlay to keep text legible */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(12,11,30,0.55) 0%, rgba(13,22,40,0.85) 100%)" }} />
+      {/* Dark gradient overlay — keeps text readable regardless of bg image */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, rgba(10,9,28,0.72) 0%, rgba(10,9,28,0.88) 100%)" }} />
 
       {/* Glow behind card image */}
       <div
