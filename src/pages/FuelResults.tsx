@@ -185,11 +185,9 @@ const FuelResults = () => {
 
         {/* Footer */}
         {!isLoading && !error && filteredCards.length > 0 && (
-          <div className="mt-12 text-center animate-slide-up" style={{ animationDelay: "500ms" }}>
-            <p className="text-[11px] text-muted-foreground">
-              Powered by{" "}
-              <span className="text-gradient-park font-semibold">great.cards</span> · Real-time data · Personalised
-            </p>
+          <div className="mt-12 flex items-center justify-center gap-2 animate-slide-up" style={{ animationDelay: "500ms" }}>
+            <span className="text-[11px] text-muted-foreground">Powered by</span>
+            <img src={greatCardsLogo} alt="great.cards" className="h-4 w-auto object-contain opacity-70" />
           </div>
         )}
       </main>

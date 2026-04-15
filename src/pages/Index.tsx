@@ -23,8 +23,7 @@ import {
   FlaskConical,
 } from "lucide-react";
 import challanBanner from "@/assets/challan-banner.svg";
-import greatCardsLogo from "@/assets/great_card_logo.svg";
-import parkPlusLogo from "@/assets/park-plus-logo.png";
+import greatCardsLogoWhite from "@/assets/great-cards-logo-white.svg";
 
 // ─── Test Scenarios ───────────────────────────────────────────────────────────
 
@@ -39,44 +38,52 @@ interface Scenario {
 
 const SCENARIOS: Scenario[] = [
   {
+    id: "micro",
+    label: "Micro Spender — ₹2K/mo",
+    description: "₹2,000/mo fuel · ₹20K income · salaried",
+    badge: "₹2K",
+    badgeColor: "bg-green-500/10 text-green-600",
+    params: { fuel: 2000, pincode: "302001", inhandIncome: 20000, empStatus: "salaried" },
+  },
+  {
+    id: "light",
+    label: "Light Spender — ₹4K/mo",
+    description: "₹4,000/mo fuel · ₹30K income · salaried",
+    badge: "₹4K",
+    badgeColor: "bg-teal-500/10 text-teal-600",
+    params: { fuel: 4000, pincode: "400001", inhandIncome: 30000, empStatus: "salaried" },
+  },
+  {
     id: "full",
-    label: "Full Profile — Salaried",
+    label: "Standard — ₹8K/mo Salaried",
     description: "₹8,000/mo fuel · ₹50K income · 110001 pincode",
-    badge: "Deep-link",
+    badge: "₹8K",
     badgeColor: "bg-primary/10 text-primary",
     params: { fuel: 8000, pincode: "110001", inhandIncome: 50000, empStatus: "salaried" },
   },
   {
     id: "self-employed",
-    label: "Full Profile — Self-Employed",
+    label: "Self-Employed — ₹12K/mo",
     description: "₹12,000/mo fuel · ₹80K income · 400001 pincode",
-    badge: "Deep-link",
+    badge: "₹12K",
     badgeColor: "bg-primary/10 text-primary",
     params: { fuel: 12000, pincode: "400001", inhandIncome: 80000, empStatus: "self-employed" },
   },
   {
-    id: "fuel-only",
-    label: "Fuel Spend Only",
-    description: "₹5,000/mo fuel · no eligibility data",
-    badge: "No eligibility",
-    badgeColor: "bg-amber-500/10 text-amber-600",
-    params: { fuel: 5000 },
-  },
-  {
     id: "high-spender",
-    label: "High Spender",
-    description: "₹20,000/mo fuel · ₹1.5L income",
-    badge: "Premium",
+    label: "High Spender — ₹20K/mo",
+    description: "₹20,000/mo fuel · ₹1.5L income · Bengaluru",
+    badge: "₹20K",
     badgeColor: "bg-purple-500/10 text-purple-600",
     params: { fuel: 20000, pincode: "560001", inhandIncome: 150000, empStatus: "salaried" },
   },
   {
-    id: "low-spender",
-    label: "Low Spender",
-    description: "₹2,000/mo fuel · ₹25K income",
-    badge: "Budget",
-    badgeColor: "bg-green-500/10 text-green-600",
-    params: { fuel: 2000, pincode: "302001", inhandIncome: 25000, empStatus: "salaried" },
+    id: "fuel-only-5k",
+    label: "Fuel Only — ₹5K (no eligibility)",
+    description: "₹5,000/mo fuel · no income or pincode data",
+    badge: "No eligibility",
+    badgeColor: "bg-amber-500/10 text-amber-600",
+    params: { fuel: 5000 },
   },
   {
     id: "no-params",
@@ -128,23 +135,6 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
       ))}
     </div>
 
-    {/* Logos — Park+ stacked above great.cards */}
-    <div
-      className="flex flex-col items-center gap-2 mb-8 z-10"
-      style={{ animation: "text-reveal 0.5s 0.2s ease-out both" }}
-    >
-      <img src={parkPlusLogo} alt="Park+"
-        className="h-8 w-auto object-contain"
-        style={{ filter: "drop-shadow(0 1px 8px rgba(0,0,0,0.9))" }} />
-      <div className="flex items-center gap-2">
-        <div className="h-px w-8 bg-white/20" />
-        <span className="text-white/40 text-[10px] tracking-widest uppercase">powered by</span>
-        <div className="h-px w-8 bg-white/20" />
-      </div>
-      <img src={greatCardsLogo} alt="great.cards"
-        className="h-6 w-auto object-contain"
-        style={{ filter: "drop-shadow(0 1px 8px rgba(0,0,0,0.9))" }} />
-    </div>
 
     {/* ── Gauge ── */}
     <div className="relative z-10">
@@ -222,6 +212,15 @@ const FuelGaugeSplash = ({ targetUrl }: { targetUrl: string }) => (
       </div>
     </div>
 
+    {/* Powered by — bottom */}
+    <div
+      className="absolute bottom-10 z-10 flex items-center gap-2"
+      style={{ animation: "text-reveal 0.5s 1.9s ease-out both" }}
+    >
+      <span className="text-[10px] text-white/50 tracking-widest uppercase">Powered by</span>
+      <img src={greatCardsLogoWhite} alt="great.cards" className="h-4 w-auto object-contain opacity-80" />
+    </div>
+
     {/* Text sequence */}
     <div className="text-center mt-24 space-y-2 z-10 px-6">
       <p
@@ -275,9 +274,10 @@ const ScenarioPicker = ({
         onClick={onClose}
       />
 
-      {/* Sheet */}
-      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[90] animate-slide-up-sheet">
-        <div className="bg-background rounded-t-[28px] shadow-2xl overflow-hidden">
+      {/* Sheet — full height */}
+      <div className="fixed inset-x-0 bottom-0 top-0 flex flex-col justify-end z-[90] pointer-events-none">
+      <div className="w-full max-w-md mx-auto pointer-events-auto animate-slide-up-sheet" style={{ height: "92vh" }}>
+        <div className="bg-background rounded-t-[28px] shadow-2xl overflow-hidden h-full flex flex-col">
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-gray-200" />
@@ -310,7 +310,7 @@ const ScenarioPicker = ({
           </div>
 
           {/* Scenarios list */}
-          <div className="px-4 pb-8 space-y-2.5 max-h-[60vh] overflow-y-auto pt-2">
+          <div className="px-4 pb-8 space-y-2.5 flex-1 overflow-y-auto pt-2">
             {SCENARIOS.map((scenario) => {
               const url = buildFuelUrl(scenario.params);
               const hasFuelParam = scenario.params !== null;
@@ -357,6 +357,7 @@ const ScenarioPicker = ({
             })}
           </div>
         </div>
+      </div>
       </div>
     </>
   );
