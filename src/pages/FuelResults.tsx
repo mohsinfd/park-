@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { Fuel, SlidersHorizontal, MapPin, Briefcase, IndianRupee, Sparkles } from "lucide-react";
-import parkPlusLogo from "@/assets/park-plus-logo.svg";
-import greatCardsLogo from "@/assets/great-cards-logo.svg";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -61,11 +59,11 @@ const PersonalisationBanner = ({
 
   return (
     <div
-      className="rounded-2xl border border-primary/20 bg-primary/5 p-4 mb-6 animate-slide-up"
+      className="rounded-2xl border border-primary/20 bg-primary/5 p-3.5 mb-5 animate-slide-up"
       style={{ animationDelay: "50ms" }}
     >
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="flex items-start justify-between gap-3 mb-2.5">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg gradient-park flex items-center justify-center shrink-0">
             <Sparkles className="w-4 h-4 text-white" />
@@ -159,20 +157,25 @@ const FuelResults = () => {
     <div className="min-h-screen bg-background">
       {/* ─── Header — Park Plus branding ─── */}
       <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <div className="max-w-md md:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            {/* Park+ logo */}
-            <img src={parkPlusLogo} alt="Park+" className="h-7 w-auto object-contain brightness-0 opacity-90" />
+            {/* Park+ wordmark (avoids flaky SVG/logo rendering on mobile) */}
+            <div className="flex items-baseline gap-1">
+              <span className="font-extrabold tracking-tight text-[18px] text-foreground">
+                Park
+              </span>
+              <span className="font-extrabold tracking-tight text-[18px] text-primary">
+                +
+              </span>
+            </div>
             {/* Divider */}
             <div className="w-px h-5 bg-border" />
-            {/* great.cards logo — smaller, muted */}
-            <div className="flex items-center gap-1.5">
+            {/* powered by great.cards */}
+            <div className="flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground">powered by</span>
-              <img
-                src={greatCardsLogo}
-                alt="great.cards"
-                className="h-4 w-auto object-contain brightness-0 opacity-70"
-              />
+              <span className="text-[12px] font-semibold text-foreground/80">
+                great<span className="text-primary">.</span>cards
+              </span>
             </div>
           </div>
 
@@ -198,7 +201,7 @@ const FuelResults = () => {
         <div className="h-0.5 w-full gradient-park opacity-60" />
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 pt-6 pb-20">
+      <main className="max-w-md md:max-w-5xl mx-auto px-4 pt-5 pb-20">
         {/* Loading hero — replaces the banner while fetching */}
         {isLoading && <LoadingHero fuelSpend={fuel} />}
 
@@ -216,12 +219,12 @@ const FuelResults = () => {
         {/* Section title row */}
         {!isLoading && (
           <div
-            className="flex items-center justify-between mb-5 animate-slide-up"
+            className="flex items-center justify-between mb-4 animate-slide-up"
             style={{ animationDelay: "100ms" }}
           >
             <div>
-              <h1 className="text-xl font-bold text-foreground mb-0.5">Best Cards for You</h1>
-              <p className="text-sm text-muted-foreground">
+              <h1 className="text-[22px] leading-tight font-extrabold text-foreground mb-0.5">Best Cards for You</h1>
+              <p className="text-[13px] text-muted-foreground">
                 Ranked by net annual savings on ₹{fuel.toLocaleString("en-IN")}/mo fuel
               </p>
             </div>

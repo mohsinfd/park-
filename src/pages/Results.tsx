@@ -40,7 +40,7 @@ const Results = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-background/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
+        <div className="max-w-md md:max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
           <button
             onClick={() => navigate("/calculator")}
             className="text-muted-foreground hover:text-foreground transition-colors hover:scale-110 active:scale-95"
@@ -58,7 +58,7 @@ const Results = () => {
         <div className="h-0.5 w-full gradient-park opacity-60" />
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 pt-8 pb-20">
+      <main className="max-w-md md:max-w-5xl mx-auto px-4 pt-6 pb-20">
         <div className="flex items-center justify-between mb-6 animate-slide-up">
           <div>
             <h1 className="text-2xl font-bold text-foreground mb-1">Best Cards for You</h1>
