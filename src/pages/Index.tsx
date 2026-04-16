@@ -270,13 +270,13 @@ const ScenarioPicker = ({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-sm animate-fade-in"
+        className="absolute inset-0 z-[80] bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
       {/* Sheet */}
-      <div className="fixed inset-x-0 bottom-0 z-[90] animate-slide-up-sheet" style={{ height: "92dvh" }}>
-        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden max-w-md mx-auto">
+      <div className="absolute inset-x-0 bottom-0 z-[90] animate-slide-up-sheet" style={{ height: "92dvh" }}>
+        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden">
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-gray-200" />
