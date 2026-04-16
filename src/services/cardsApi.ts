@@ -82,7 +82,10 @@ function normalizeCalcCard(raw: any): FuelCard {
     }
   }
 
-  const annualFee = parseFee(raw.annual_fee_text ?? raw.annual_fee ?? raw.joining_fees ?? raw.joining_fee_text ?? 0);
+  // joining_fee = one-time year-1 fee; annual_fee = recurring from year 2 onwards
+  // Keep them separate — the API provides both as distinct fields
+  const joiningFee = parseFee(raw.joining_fees ?? raw.joining_fee_text ?? raw.joining_fee ?? 0);
+  const annualFee  = parseFee(raw.annual_fee ?? raw.annual_fee_text ?? joiningFee);
   const annualSaving = raw.total_savings_yearly ?? raw.annual_saving ?? 0;
   const alias = raw.seo_card_alias ?? raw.card_alias ?? "";
 
@@ -93,7 +96,7 @@ function normalizeCalcCard(raw: any): FuelCard {
       ?? BANK_MAP[raw.bank_id]
       ?? (raw.bank_id ? `Bank ${raw.bank_id}` : raw.bank || ""),
     annual_fee: annualFee,
-    joining_fee: annualFee,
+    joining_fee: joiningFee,
     // /calculate card_type = "rewards" (category, useless for network) — leave blank
     card_network: "",
     tracking_url: raw.cg_network_url || raw.network_url || "",
