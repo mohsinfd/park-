@@ -274,9 +274,9 @@ const ScenarioPicker = ({
         onClick={onClose}
       />
 
-      {/* Sheet — fixed, centred to viewport, max-w-md */}
-      <div className="fixed bottom-0 left-0 right-0 z-[90] animate-slide-up-sheet flex justify-center" style={{ height: "92dvh" }}>
-        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden w-full max-w-md">
+      {/* Sheet */}
+      <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-[90] animate-slide-up-sheet" style={{ height: "92dvh" }}>
+        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden">
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-gray-200" />
