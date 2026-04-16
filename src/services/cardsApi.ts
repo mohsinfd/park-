@@ -255,7 +255,7 @@ async function fetchEligibleCardsDirectly(params: DeepLinkParams): Promise<FuelC
 async function fetchCardDetailDirectly(alias: string): Promise<FuelCard> {
   const token = await getPartnerToken();
 
-  const res = await fetch(`/api/partner/cardgenius/cards/${encodeURIComponent(alias)}`, {
+  const res = await fetch(`/api/partner/cardgenius/card-detail/${encodeURIComponent(alias)}`, {
     method: "GET",
     headers: { "partner-token": token },
   });
