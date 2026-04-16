@@ -58,12 +58,20 @@ function parseFee(val: unknown): number {
 // ─── Normalise a raw /calculate card ─────────────────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeCalcCard(raw: any): FuelCard {
+  const seen = new Set<string>();
   const features: string[] = [];
   if (Array.isArray(raw.product_usps)) {
     for (const usp of raw.product_usps) {
-      if (typeof usp === "string") features.push(usp);
-      else if (usp?.header || usp?.description)
-        features.push([usp.header, usp.description].filter(Boolean).join(" — "));
+      const str = typeof usp === "string"
+        ? usp
+        : (usp?.header || usp?.description)
+          ? [usp.header, usp.description].filter(Boolean).join(" — ")
+          : null;
+      if (str) {
+        // Deduplicate by normalised key (lowercase, collapse whitespace)
+        const key = str.toLowerCase().replace(/\s+/g, " ").trim();
+        if (!seen.has(key)) { seen.add(key); features.push(str); }
+      }
     }
   }
   const tags: string[] = Array.isArray(raw.tags)
