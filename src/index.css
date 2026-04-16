@@ -249,6 +249,11 @@
   to   { transform: rotate(75deg); }
 }
 
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50%       { transform: translateY(-8px); opacity: 1; }
+}
+
 /* Splash fade-in with 1s delay built into the keyframe timing */
 @keyframes fade-in-splash {
   from { opacity: 0; }

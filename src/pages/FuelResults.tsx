@@ -104,6 +104,30 @@ const FuelResults = () => {
 
   if (!deepLinkParams) return null;
 
+  // While fetching, hold the dark splash aesthetic so there's no white flash
+  // between the loader and the populated results page.
+  if (isLoading) {
+    return (
+      <div
+        className="fixed inset-0 flex flex-col items-center justify-center gap-4"
+        style={{ background: "linear-gradient(160deg, #07070f 0%, #0d0c22 60%, #0f0e28 100%)" }}
+      >
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex gap-1.5">
+            {[0, 1, 2].map(i => (
+              <div
+                key={i}
+                className="w-2 h-2 rounded-full bg-primary"
+                style={{ animation: `bounce 1.2s ${i * 0.2}s ease-in-out infinite` }}
+              />
+            ))}
+          </div>
+          <p className="text-white/50 text-[11px] tracking-widest uppercase">Finding your best cards</p>
+        </div>
+      </div>
+    );
+  }
+
   const { fuel, pincode, inhandIncome, empStatus } = deepLinkParams;
   const trackingSource = `park_plus_fuel_${fuel}`;
   const isPersonalized = Boolean(pincode && inhandIncome);
