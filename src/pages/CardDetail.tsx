@@ -204,30 +204,32 @@ const FeeSection = ({ card }: { card: FuelCard }) => {
 };
 
 // ─── Fuel benefits ────────────────────────────────────────────────────────────
+// extractFuelTags returns: clean brand names + "Surcharge waiver" if applicable
 const FuelBenefits = ({ card }: { card: FuelCard }) => {
-  const fuelTags = extractFuelTags(card);
-  if (fuelTags.length === 0 && (!card.brand_options || card.brand_options.length === 0)) return null;
+  const pills = extractFuelTags(card);
+  if (pills.length === 0) return null;
+
+  const BRAND_NAMES = new Set(["Indian Oil", "BPCL", "HPCL", "Shell"]);
 
   return (
-    <Section title="Fuel Benefits">
+    <Section title="Works at">
       <div className="flex flex-wrap gap-2">
-        {card.brand_options?.map((brand) => (
-          <span
-            key={brand}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-[12px] font-semibold"
-          >
-            <Fuel className="w-3 h-3" />
-            {brand}
-          </span>
-        ))}
-        {fuelTags.map((tag) => (
-          <span
-            key={tag}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary border border-border text-foreground text-[12px] font-medium"
-          >
-            {tag}
-          </span>
-        ))}
+        {pills.map((pill) => {
+          const isBrand = BRAND_NAMES.has(pill);
+          return (
+            <span
+              key={pill}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold border ${
+                isBrand
+                  ? "bg-amber-500/10 border-amber-500/20 text-amber-700 dark:text-amber-400"
+                  : "bg-secondary border-border text-foreground font-medium"
+              }`}
+            >
+              {isBrand && <Fuel className="w-3 h-3" />}
+              {pill}
+            </span>
+          );
+        })}
       </div>
     </Section>
   );

@@ -1,38 +1,39 @@
 import type { FuelCard, RankedCard, FuelFiltersState } from "@/types/card";
 
-const FUEL_KEYWORDS = [
-  { pattern: /fuel/i, tag: "Fuel Cashback" },
-  { pattern: /surcharge\s*waiver/i, tag: "Fuel Surcharge Waiver" },
-  { pattern: /\b(BPCL|IndianOil|IOCL|HP|HPCL)\b/i, tag: "Petrol Benefits" },
-  { pattern: /\bpetrol\b/i, tag: "Petrol Benefits" },
-  { pattern: /\bdiesel\b/i, tag: "Diesel Benefits" },
-];
+// Canonical brand display names
+const BRAND_LABELS: Record<string, string> = {
+  Indian: "Indian Oil",
+  IndianOil: "Indian Oil",
+  IOCL: "Indian Oil",
+  BPCL: "BPCL",
+  HP: "HPCL",
+  HPCL: "HPCL",
+  Shell: "Shell",
+};
 
+/**
+ * Returns a small set of clean, factual pills for a fuel card.
+ * Sources only real API data — no synthetic labels from keyword matching.
+ *
+ * Pill types:
+ *  • Pump brand(s) from brand_options  e.g. "Indian Oil", "BPCL"
+ *  • "Surcharge waiver" if explicitly mentioned in features/tags
+ */
 export function extractFuelTags(card: FuelCard): string[] {
-  const tags = new Set<string>();
-  for (const feature of card.features) {
-    for (const { pattern, tag } of FUEL_KEYWORDS) {
-      if (pattern.test(feature)) tags.add(tag);
-    }
-  }
-  for (const t of card.tags) {
-    if (/fuel/i.test(t)) tags.add("Fuel Cashback");
-  }
-  // Add brand-specific tags — normalise short API brand names to full names
-  const BRAND_LABELS: Record<string, string> = {
-    Indian: "Indian Oil",
-    BPCL: "BPCL",
-    HP: "HPCL",
-    HPCL: "HPCL",
-    Shell: "Shell",
-  };
+  const tags: string[] = [];
+
+  // 1. Pump brands — clean names, no "Benefits" suffix
   for (const brand of card.brand_options || []) {
-    if (brand) {
-      const label = BRAND_LABELS[brand] ?? brand;
-      tags.add(`${label} Benefits`);
-    }
+    if (brand) tags.push(BRAND_LABELS[brand] ?? brand);
   }
-  return Array.from(tags);
+
+  // 2. Surcharge waiver — only if the API explicitly says so
+  const hasSurchargeWaiver = [...card.features, ...card.tags].some((s) =>
+    /surcharge\s*waiver/i.test(s)
+  );
+  if (hasSurchargeWaiver) tags.push("Surcharge waiver");
+
+  return [...new Set(tags)]; // deduplicate
 }
 
 const GST_RATE = 0.18; // 18% GST on credit card joining/annual fee
