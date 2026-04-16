@@ -10,7 +10,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const alias = req.query.alias;
   if (typeof alias !== "string" || !alias) {
-    return res.status(400).json({ error: "Missing alias param" });
+    return res.status(400).json({ error: "Missing alias query param" });
   }
 
   try {
