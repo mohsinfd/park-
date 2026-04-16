@@ -3,12 +3,12 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   ChevronLeft,
   ExternalLink,
-  Star,
   Fuel,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  Sofa,
+  Gift,
+  Zap,
 } from "lucide-react";
 import parkPlusLogo from "@/assets/park-plus-logo.png";
 import greatCardsLogo from "@/assets/great_card_logo.svg";
@@ -38,7 +38,21 @@ const DetailLoader = () => (
   </div>
 );
 
-// ─── Hero visual (matches CardList HeroCard treatment) ────────────────────────
+// ─── Parse a feature string into { header, description } ─────────────────────
+// The API product_usps have { header, description } which normalizeCalcCard
+// joins with " — ". Split them back for richer display.
+function parseFeature(feat: string): { header: string; description: string } {
+  const sep = feat.indexOf(" — ");
+  if (sep !== -1) {
+    return {
+      header: feat.slice(0, sep).trim(),
+      description: feat.slice(sep + 3).trim(),
+    };
+  }
+  return { header: feat.trim(), description: "" };
+}
+
+// ─── Hero visual ──────────────────────────────────────────────────────────────
 const CardHero = ({
   card,
   personalized,
@@ -47,32 +61,22 @@ const CardHero = ({
   personalized: boolean;
 }) => {
   const network = card.card_network || "Visa";
-
   return (
     <div
       className="relative rounded-3xl overflow-hidden mx-4 mb-5"
       style={{
-        background: card.bg_gradient
-          ? card.bg_gradient
-          : "linear-gradient(150deg, #0c0b1e 0%, #14103a 45%, #0d1628 100%)",
+        background: card.bg_gradient || "linear-gradient(150deg, #0c0b1e 0%, #14103a 45%, #0d1628 100%)",
       }}
     >
-      {/* Dark overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.70) 100%)" }}
-      />
-      {/* Glow */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-48 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, hsl(243 75% 55% / 0.18) 0%, transparent 70%)" }}
-      />
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.68) 100%)" }} />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-48 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, hsl(243 75% 55% / 0.18) 0%, transparent 70%)" }} />
 
-      {/* Top badges */}
       <div className="flex items-start justify-between px-5 pt-5 pb-2 relative z-10">
-        <div className="flex flex-col gap-1.5">
+        <div>
           {personalized && (
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/25 text-green-400 text-[11px] font-semibold w-fit">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-500/15 border border-green-500/25 text-green-400 text-[11px] font-semibold">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
               Eligible
             </span>
@@ -83,7 +87,6 @@ const CardHero = ({
         </span>
       </div>
 
-      {/* Card image */}
       <div className="flex justify-center py-5 relative z-10">
         {card.image_url ? (
           <img
@@ -100,7 +103,6 @@ const CardHero = ({
         )}
       </div>
 
-      {/* Name + bank */}
       <div className="text-center px-5 pb-6 relative z-10">
         <h1 className="text-white font-bold text-[18px] leading-snug">{card.card_name}</h1>
         <p className="text-white/45 text-[13px] mt-0.5">{card.bank}</p>
@@ -117,7 +119,7 @@ const SavingsStrip = ({
   card: FuelCard;
   monthlyFuelSpend: number;
 }) => {
-  const cashbackRate = monthlyFuelSpend > 0 && card.fuel_savings_monthly > 0
+  const cashbackPct = monthlyFuelSpend > 0 && card.fuel_savings_monthly > 0
     ? (card.fuel_savings_monthly / monthlyFuelSpend) * 100
     : 0;
   const netSaving = card.roi > 0 ? card.roi : card.annual_saving - feeWithGst(card.annual_fee);
@@ -125,20 +127,18 @@ const SavingsStrip = ({
   const tiles = [
     { label: "Net Annual Saving", value: `+₹${netSaving.toLocaleString("en-IN")}`, highlight: true },
     { label: "Monthly Saving", value: `₹${card.monthly_saving.toLocaleString("en-IN")}`, highlight: false },
-    ...(cashbackRate > 0
-      ? [{ label: "Fuel Cashback", value: `${cashbackRate.toFixed(1)}%`, highlight: false }]
+    ...(cashbackPct > 0
+      ? [{ label: "% Back on Fuel", value: `${cashbackPct.toFixed(1)}%`, highlight: false }]
       : []),
   ];
 
   return (
-    <div className="mx-4 mb-5 grid grid-cols-3 gap-2">
+    <div className={`mx-4 mb-5 grid gap-2 ${tiles.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
       {tiles.map(({ label, value, highlight }) => (
         <div
           key={label}
           className={`rounded-2xl p-3 text-center border ${
-            highlight
-              ? "bg-primary/10 border-primary/20"
-              : "bg-secondary border-border"
+            highlight ? "bg-primary/10 border-primary/20" : "bg-secondary border-border"
           }`}
         >
           <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
@@ -159,11 +159,93 @@ const Section = ({ title, children }: { title: string; children: React.ReactNode
   </div>
 );
 
+// ─── Welcome offer ────────────────────────────────────────────────────────────
+// Surfaces any feature that mentions a one-time welcome/joining/first-use bonus
+const WelcomeOffer = ({ features }: { features: string[] }) => {
+  const WELCOME_RE = /welcome|joining\s*bonus|first\s*(use|transact|spend)|sign.?up bonus|bonus\s*point|reward\s*point/i;
+  const welcomeFeats = features.filter((f) => WELCOME_RE.test(f));
+  if (welcomeFeats.length === 0) return null;
+
+  return (
+    <Section title="Welcome Offer">
+      <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 overflow-hidden">
+        {welcomeFeats.map((feat, i) => {
+          const { header, description } = parseFeature(feat);
+          return (
+            <div
+              key={i}
+              className={`flex items-start gap-3 px-4 py-3.5 ${i < welcomeFeats.length - 1 ? "border-b border-amber-500/10" : ""}`}
+            >
+              <Gift className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-foreground leading-snug">{header}</p>
+                {description && <p className="text-[12px] text-muted-foreground mt-0.5 leading-snug">{description}</p>}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </Section>
+  );
+};
+
+// ─── Card benefits (all non-welcome USPs) ────────────────────────────────────
+const CardBenefits = ({ features }: { features: string[] }) => {
+  const [expanded, setExpanded] = useState(false);
+  const WELCOME_RE = /welcome|joining\s*bonus|first\s*(use|transact|spend)|sign.?up bonus|bonus\s*point|reward\s*point/i;
+  const benefitFeats = features.filter((f) => !WELCOME_RE.test(f));
+  if (benefitFeats.length === 0) return null;
+
+  const LIMIT = 5;
+  const shown = expanded ? benefitFeats : benefitFeats.slice(0, LIMIT);
+
+  return (
+    <Section title="Card Benefits">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        {shown.map((feat, i) => {
+          const { header, description } = parseFeature(feat);
+          return (
+            <div
+              key={i}
+              className={`flex items-start gap-3 px-4 py-3.5 ${i < shown.length - 1 ? "border-b border-border" : ""}`}
+            >
+              <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Zap className="w-2.5 h-2.5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground leading-snug">{header}</p>
+                {description && (
+                  <p className="text-[12px] text-muted-foreground mt-0.5 leading-snug">{description}</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+        {benefitFeats.length > LIMIT && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="w-full flex items-center justify-center gap-1 py-3 text-[12px] font-semibold text-primary border-t border-border hover:bg-primary/5 transition-colors"
+          >
+            {expanded
+              ? <><ChevronUp className="w-3.5 h-3.5" /> Show less</>
+              : <><ChevronDown className="w-3.5 h-3.5" /> {benefitFeats.length - LIMIT} more benefits</>
+            }
+          </button>
+        )}
+      </div>
+    </Section>
+  );
+};
+
 // ─── Fee section ──────────────────────────────────────────────────────────────
 const FeeSection = ({ card }: { card: FuelCard }) => {
   const joiningFeeGst = feeWithGst(card.joining_fee);
   const annualFeeGst = feeWithGst(card.annual_fee);
   const isLtf = joiningFeeGst === 0 && annualFeeGst === 0;
+
+  // Surface fee waiver condition if the API mentions it
+  const WAIVER_RE = /waiv|spend\s*(₹|rs\.?|inr)?\s*[\d,.]+\s*(lakh|lac|l|k|crore)?/i;
+  const waiverNote = card.features.find((f) => WAIVER_RE.test(f) && /annual\s*fee|fee\s*waiv/i.test(f));
 
   if (isLtf) {
     return (
@@ -176,39 +258,52 @@ const FeeSection = ({ card }: { card: FuelCard }) => {
     );
   }
 
-  const FeeRow = ({ label, amount, sub }: { label: string; amount: number; sub: string }) => (
-    <div className="flex items-center justify-between py-3 border-b border-border last:border-0">
-      <div>
-        <p className="text-sm font-medium text-foreground">{label}</p>
-        <p className="text-[11px] text-muted-foreground">{sub}</p>
-      </div>
-      {amount === 0 ? (
-        <span className="text-green-500 font-bold text-sm">Free</span>
-      ) : (
-        <div className="text-right">
-          <p className="font-bold text-foreground text-sm">₹{amount.toLocaleString("en-IN")}</p>
-          <p className="text-[10px] text-muted-foreground">incl. 18% GST</p>
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <Section title="Fees">
-      <div className="rounded-2xl border border-border bg-card px-4">
-        <FeeRow label="Joining Fee" amount={joiningFeeGst} sub="One-time, year 1 only" />
-        <FeeRow label="Annual Fee" amount={annualFeeGst} sub="Recurring from year 2" />
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-border">
+          <div>
+            <p className="text-sm font-medium text-foreground">Joining Fee</p>
+            <p className="text-[11px] text-muted-foreground">One-time · year 1 only</p>
+          </div>
+          {joiningFeeGst === 0 ? (
+            <span className="text-green-500 font-bold text-sm">Free</span>
+          ) : (
+            <div className="text-right">
+              <p className="font-bold text-foreground text-sm">₹{joiningFeeGst.toLocaleString("en-IN")}</p>
+              <p className="text-[10px] text-muted-foreground">incl. 18% GST</p>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center justify-between px-4 py-3.5">
+          <div>
+            <p className="text-sm font-medium text-foreground">Annual Fee</p>
+            <p className="text-[11px] text-muted-foreground">Recurring from year 2</p>
+          </div>
+          {annualFeeGst === 0 ? (
+            <span className="text-green-500 font-bold text-sm">Free</span>
+          ) : (
+            <div className="text-right">
+              <p className="font-bold text-foreground text-sm">₹{annualFeeGst.toLocaleString("en-IN")}</p>
+              <p className="text-[10px] text-muted-foreground">incl. 18% GST</p>
+            </div>
+          )}
+        </div>
+        {waiverNote && (
+          <div className="flex items-start gap-2 px-4 py-3 border-t border-border bg-green-500/5">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-500 shrink-0 mt-0.5" />
+            <p className="text-[12px] text-green-600 leading-snug">{parseFeature(waiverNote).header}</p>
+          </div>
+        )}
       </div>
     </Section>
   );
 };
 
-// ─── Fuel benefits ────────────────────────────────────────────────────────────
-// extractFuelTags returns: clean brand names + "Surcharge waiver" if applicable
-const FuelBenefits = ({ card }: { card: FuelCard }) => {
+// ─── Works at (fuel brands + surcharge waiver) ────────────────────────────────
+const WorksAt = ({ card }: { card: FuelCard }) => {
   const pills = extractFuelTags(card);
   if (pills.length === 0) return null;
-
   const BRAND_NAMES = new Set(["Indian Oil", "BPCL", "HPCL", "Shell"]);
 
   return (
@@ -230,69 +325,6 @@ const FuelBenefits = ({ card }: { card: FuelCard }) => {
             </span>
           );
         })}
-      </div>
-    </Section>
-  );
-};
-
-// ─── Key features ─────────────────────────────────────────────────────────────
-const KeyFeatures = ({ features }: { features: string[] }) => {
-  const [expanded, setExpanded] = useState(false);
-  if (features.length === 0) return null;
-  const shown = expanded ? features : features.slice(0, 6);
-
-  return (
-    <Section title="Key Features">
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
-        {shown.map((feat, i) => (
-          <div
-            key={i}
-            className={`flex items-start gap-3 px-4 py-3 ${i < shown.length - 1 ? "border-b border-border" : ""}`}
-          >
-            <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-            <p className="text-sm text-foreground leading-snug">{feat}</p>
-          </div>
-        ))}
-        {features.length > 6 && (
-          <button
-            onClick={() => setExpanded(!expanded)}
-            className="w-full flex items-center justify-center gap-1 py-3 text-[12px] font-semibold text-primary border-t border-border hover:bg-primary/5 transition-colors"
-          >
-            {expanded ? (
-              <><ChevronUp className="w-3.5 h-3.5" /> Show less</>
-            ) : (
-              <><ChevronDown className="w-3.5 h-3.5" /> Show {features.length - 6} more</>
-            )}
-          </button>
-        )}
-      </div>
-    </Section>
-  );
-};
-
-// ─── Other perks ──────────────────────────────────────────────────────────────
-const OtherPerks = ({ card }: { card: FuelCard }) => {
-  const hasLounges = card.lounges > 0;
-  const hasRating = card.rating > 0;
-  if (!hasLounges && !hasRating) return null;
-
-  return (
-    <Section title="Other Perks">
-      <div className="grid grid-cols-2 gap-2">
-        {hasLounges && (
-          <div className="rounded-2xl border border-border bg-card p-4 text-center">
-            <Sofa className="w-5 h-5 text-primary mx-auto mb-1" />
-            <p className="font-bold text-foreground text-[18px] leading-none">{card.lounges}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Lounge visits / quarter</p>
-          </div>
-        )}
-        {hasRating && (
-          <div className="rounded-2xl border border-border bg-card p-4 text-center">
-            <Star className="w-5 h-5 text-amber-400 mx-auto mb-1 fill-amber-400" />
-            <p className="font-bold text-foreground text-[18px] leading-none">{card.rating.toFixed(1)}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Card rating</p>
-          </div>
-        )}
       </div>
     </Section>
   );
@@ -361,13 +393,13 @@ const CardDetail = () => {
       </header>
 
       {/* ─── Content ─── */}
-      <main className="max-w-md mx-auto pt-5 pb-32">
+      <main className="max-w-md mx-auto pt-5 pb-36">
         <CardHero card={card} personalized={personalized} />
         <SavingsStrip card={card} monthlyFuelSpend={monthlyFuelSpend} />
+        <WelcomeOffer features={card.features} />
+        <CardBenefits features={card.features} />
         <FeeSection card={card} />
-        <FuelBenefits card={card} />
-        <KeyFeatures features={card.features} />
-        <OtherPerks card={card} />
+        <WorksAt card={card} />
       </main>
 
       {/* ─── Sticky Apply Bar ─── */}
