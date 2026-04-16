@@ -250,6 +250,35 @@ async function fetchEligibleCardsDirectly(params: DeepLinkParams): Promise<FuelC
   return eligible;
 }
 
+// ─── Single card detail ───────────────────────────────────────────────────────
+
+async function fetchCardDetailDirectly(alias: string): Promise<FuelCard> {
+  const token = await getPartnerToken();
+
+  const res = await fetch(`/api/partner/cardgenius/cards/${encodeURIComponent(alias)}`, {
+    method: "GET",
+    headers: { "partner-token": token },
+  });
+  if (!res.ok) throw new Error(`Card detail fetch failed: ${res.status}`);
+
+  const result = await res.json();
+  // /cards/:alias returns { data: { ...card } } or { data: [card] }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const raw: any = Array.isArray(result?.data) ? result.data[0] : result?.data ?? result;
+  if (!raw) throw new Error("No card data in response");
+
+  const calc = normalizeCalcCard(raw);
+  const visuals = extractVisuals(raw);
+  return {
+    ...calc,
+    bg_gradient: visuals.bg_gradient || calc.bg_gradient,
+    bg_image_url: visuals.bg_image_url || calc.bg_image_url,
+    image_url: visuals.image_url || calc.image_url,
+    card_network: visuals.card_network || calc.card_network,
+    tracking_url: visuals.tracking_url || calc.tracking_url,
+  };
+}
+
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function fetchFuelCards(monthlyFuelSpend: number = 5000): Promise<FuelCard[]> {
@@ -258,4 +287,8 @@ export async function fetchFuelCards(monthlyFuelSpend: number = 5000): Promise<F
 
 export async function fetchEligibleFuelCards(params: DeepLinkParams): Promise<FuelCard[]> {
   return fetchEligibleCardsDirectly(params);
+}
+
+export async function fetchCardDetail(alias: string): Promise<FuelCard> {
+  return fetchCardDetailDirectly(alias);
 }

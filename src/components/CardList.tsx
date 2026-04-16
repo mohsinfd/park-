@@ -1,5 +1,6 @@
 import React from "react";
-import { AlertCircle, ExternalLink, Star, Fuel, ChevronRight, TrendingUp } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { AlertCircle, ExternalLink, Star, Fuel, ChevronRight, TrendingUp, Info } from "lucide-react";
 
 // Detect payment network from card name
 function detectNetwork(name: string): string {
@@ -38,16 +39,25 @@ const HeroCard = ({
   card,
   source,
   personalized,
+  monthlyFuelSpend,
 }: {
   card: RankedCard;
   source: string;
   personalized: boolean;
+  monthlyFuelSpend: number;
 }) => {
+  const navigate = useNavigate();
   const applyHref = buildTrackingUrl(
     card.tracking_url,
     source,
     slugify(card.card_name) || String(card.card_id)
   );
+  const handleViewDetails = () => {
+    if (!card.seo_card_alias) return;
+    navigate(`/card/${card.seo_card_alias}`, {
+      state: { source, monthlyFuelSpend, personalized },
+    });
+  };
 
   return (
     <div
@@ -183,13 +193,23 @@ const HeroCard = ({
         </div>
       </div>
 
-      {/* Apply CTA */}
-      <div className="px-5 pb-6 relative z-10">
+      {/* Apply CTA + View Details */}
+      <div className="px-5 pb-6 relative z-10 flex gap-2">
+        {card.seo_card_alias && (
+          <button
+            onClick={handleViewDetails}
+            className="flex items-center justify-center gap-1.5 rounded-2xl font-semibold text-[14px] text-white/80 border border-white/15 bg-white/8 hover:bg-white/12 active:scale-[0.97] transition-all px-4"
+            style={{ height: "54px" }}
+          >
+            <Info className="w-4 h-4" />
+            Details
+          </button>
+        )}
         <a
           href={applyHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full rounded-2xl font-bold text-[16px] text-white transition-all duration-200 active:scale-[0.97] group"
+          className="flex flex-1 items-center justify-center gap-2 rounded-2xl font-bold text-[16px] text-white transition-all duration-200 active:scale-[0.97] group"
           style={{
             height: "54px",
             background: "linear-gradient(135deg, hsl(243,75%,58%) 0%, hsl(243,75%,46%) 100%)",
@@ -248,22 +268,33 @@ const RunnerUpCard = ({
   rank,
   source,
   delay,
+  monthlyFuelSpend,
+  personalized,
 }: {
   card: RankedCard;
   rank: number;
   source: string;
   delay: number;
+  monthlyFuelSpend: number;
+  personalized: boolean;
 }) => {
+  const navigate = useNavigate();
   const applyHref = buildTrackingUrl(
     card.tracking_url,
     source,
     slugify(card.card_name) || String(card.card_id)
   );
+  const handleCardClick = () => {
+    if (card.seo_card_alias) {
+      navigate(`/card/${card.seo_card_alias}`, { state: { source, monthlyFuelSpend, personalized } });
+    }
+  };
 
   return (
     <div
-      className="shrink-0 w-[168px] rounded-2xl border border-border bg-card overflow-hidden flex flex-col animate-slide-up"
+      className="shrink-0 w-[168px] rounded-2xl border border-border bg-card overflow-hidden flex flex-col animate-slide-up cursor-pointer active:scale-[0.97] transition-transform"
       style={{ animationDelay: `${delay}ms` }}
+      onClick={handleCardClick}
     >
       {/* Image */}
       <div className="h-[86px] bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center relative overflow-hidden">
@@ -311,6 +342,7 @@ const RunnerUpCard = ({
             href={applyHref}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="flex items-center justify-center gap-1 w-full py-2 rounded-xl bg-primary/10 text-primary text-[11px] font-bold hover:bg-primary/20 active:scale-95 transition-all"
           >
             Apply <ExternalLink className="w-2.5 h-2.5" />
@@ -328,25 +360,28 @@ const CompactRow = ({
   source,
   delay,
   isLast,
+  monthlyFuelSpend,
+  personalized,
 }: {
   card: RankedCard;
   rank: number;
   source: string;
   delay: number;
   isLast: boolean;
+  monthlyFuelSpend: number;
+  personalized: boolean;
 }) => {
-  const applyHref = buildTrackingUrl(
-    card.tracking_url,
-    source,
-    slugify(card.card_name) || String(card.card_id)
-  );
+  const navigate = useNavigate();
+  const handleClick = () => {
+    if (card.seo_card_alias) {
+      navigate(`/card/${card.seo_card_alias}`, { state: { source, monthlyFuelSpend, personalized } });
+    }
+  };
 
   return (
-    <a
-      href={applyHref}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={`flex items-center gap-3 py-3.5 group animate-slide-up ${!isLast ? "border-b border-border" : ""}`}
+    <div
+      onClick={handleClick}
+      className={`flex items-center gap-3 py-3.5 group animate-slide-up cursor-pointer ${!isLast ? "border-b border-border" : ""}`}
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Rank */}
@@ -374,7 +409,7 @@ const CompactRow = ({
         </div>
         <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
       </div>
-    </a>
+    </div>
   );
 };
 
@@ -469,7 +504,7 @@ const CardList = ({
   return (
     <div>
       {/* #1 — Cinematic hero card */}
-      <HeroCard card={hero} source={source} personalized={personalized} />
+      <HeroCard card={hero} source={source} personalized={personalized} monthlyFuelSpend={monthlyFuelSpend} />
 
       {/* Savings context bar */}
       <SavingsBar annualSaving={hero.annual_saving_net} monthlyFuelSpend={monthlyFuelSpend} />
@@ -488,6 +523,8 @@ const CardList = ({
                 rank={i + 2}
                 source={source}
                 delay={140 + i * 60}
+                monthlyFuelSpend={monthlyFuelSpend}
+                personalized={personalized}
               />
             ))}
           </div>
@@ -509,6 +546,8 @@ const CardList = ({
                 source={source}
                 delay={300 + i * 40}
                 isLast={i === remaining.length - 1}
+                monthlyFuelSpend={monthlyFuelSpend}
+                personalized={personalized}
               />
             ))}
           </div>

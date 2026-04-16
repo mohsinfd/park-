@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Calculator from "./pages/Calculator";
 import Results from "./pages/Results";
 import FuelResults from "./pages/FuelResults";
+import CardDetail from "./pages/CardDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,8 @@ const App = () => (
           <Route path="/results" element={<Results />} />
           {/* Park Plus deep-link entry point */}
           <Route path="/fuel" element={<FuelResults />} />
+          {/* Card details */}
+          <Route path="/card/:alias" element={<CardDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
