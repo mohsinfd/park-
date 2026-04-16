@@ -47,7 +47,12 @@ export function rankCards(cards: FuelCard[], monthlyFuelSpend: number): RankedCa
   const ranked: RankedCard[] = cards
     .map((card) => {
       const feeIncGst = feeWithGst(card.annual_fee);
-      const annualSavingNet = card.annual_saving - feeIncGst;
+      // Use roi from API when available — this equals total_savings_yearly - joining_fees
+      // (no GST added), which matches great.cards ranking. Fall back to manual calc only
+      // if roi is missing/zero and card has savings.
+      const annualSavingNet = card.roi > 0
+        ? card.roi
+        : card.annual_saving - feeIncGst;
       const fuelTags = extractFuelTags(card);
       const cashbackRate = monthlyFuelSpend > 0
         ? card.fuel_savings_monthly / monthlyFuelSpend

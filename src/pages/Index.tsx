@@ -9,7 +9,6 @@ import {
   ShieldCheck,
   Grid2X2,
   Search,
-  User,
   Home,
   Heart,
   IndianRupee,
@@ -24,6 +23,7 @@ import {
 } from "lucide-react";
 import challanBanner from "@/assets/challan-banner.jpg";
 import greatCardsLogoWhite from "@/assets/great_white_logo.svg";
+import parkPlusLogo from "@/assets/park-plus-logo.png";
 
 // ─── Test Scenarios ───────────────────────────────────────────────────────────
 
@@ -426,9 +426,7 @@ const Index = () => {
       {/* ─── Hero / Banner area ─── */}
       <div className="relative w-full">
         <div className="absolute top-3 left-3 z-20">
-          <div className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center shadow-lg">
-            <User className="w-5 h-5 text-background" />
-          </div>
+          <img src={parkPlusLogo} alt="Park+" className="h-8 w-auto object-contain drop-shadow-lg" />
         </div>
         <div className="absolute top-3 right-3 z-20">
           <div className="w-10 h-10 rounded-full bg-background flex items-center justify-center shadow-lg">
