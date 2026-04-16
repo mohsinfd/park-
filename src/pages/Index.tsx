@@ -406,7 +406,7 @@ const Index = () => {
     setShowSplash(true);
     setTimeout(() => {
       navigate(url);
-    }, 5500);
+    }, 4500);
   };
 
   return (
