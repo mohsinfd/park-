@@ -290,7 +290,7 @@ const ScenarioPicker = ({
               </div>
               <div>
                 <p className="font-bold text-foreground text-[15px]">Test Scenarios</p>
-                <p className="text-[11px] text-muted-foreground">Pick a user profile to preview</p>
+                <p className="text-[11px] text-muted-foreground">Internal demo only · not visible to users</p>
               </div>
             </div>
             <button
@@ -301,11 +301,14 @@ const ScenarioPicker = ({
             </button>
           </div>
 
-          {/* URL preview label */}
-          <div className="px-5 pt-3 pb-1">
+          {/* Context note */}
+          <div className="px-5 pt-3 pb-1 flex items-center justify-between">
             <p className="text-[10px] font-semibold tracking-widest uppercase text-muted-foreground">
               Select a scenario
             </p>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 font-semibold">
+              🔒 Reviewer only
+            </span>
           </div>
 
           {/* Scenarios list */}
