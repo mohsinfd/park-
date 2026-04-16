@@ -268,15 +268,15 @@ const ScenarioPicker = ({
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Backdrop — full viewport */}
       <div
-        className="absolute inset-0 z-[80] bg-black/40 backdrop-blur-sm animate-fade-in"
+        className="fixed inset-0 z-[80] bg-black/40 backdrop-blur-sm animate-fade-in"
         onClick={onClose}
       />
 
-      {/* Sheet */}
-      <div className="absolute inset-x-0 bottom-0 z-[90] animate-slide-up-sheet" style={{ height: "92dvh" }}>
-        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden">
+      {/* Sheet — fixed, centred to viewport, max-w-md */}
+      <div className="fixed bottom-0 left-0 right-0 z-[90] animate-slide-up-sheet flex justify-center" style={{ height: "92dvh" }}>
+        <div className="bg-background rounded-t-[28px] shadow-2xl h-full flex flex-col overflow-hidden w-full max-w-md">
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-1">
             <div className="w-10 h-1 rounded-full bg-gray-200" />
@@ -403,21 +403,22 @@ const Index = () => {
     setShowSplash(true);
     setTimeout(() => {
       navigate(url);
-    }, 4000);
+    }, 5500);
   };
 
   return (
+    <>
+    {/* ScenarioPicker outside overflow-hidden container — uses fixed positioning */}
+    <ScenarioPicker
+      open={sheetOpen}
+      onClose={() => setSheetOpen(false)}
+      onSelect={handleScenarioSelect}
+    />
+
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col max-w-md mx-auto relative overflow-hidden">
 
       {/* ─── Fuel Gauge Splash ─── */}
       {showSplash && <FuelGaugeSplash targetUrl={splashTarget} />}
-
-      {/* ─── Scenario Picker ─── */}
-      <ScenarioPicker
-        open={sheetOpen}
-        onClose={() => setSheetOpen(false)}
-        onSelect={handleScenarioSelect}
-      />
 
       {/* ─── Hero / Banner area ─── */}
       <div className="relative w-full">
@@ -509,6 +510,7 @@ const Index = () => {
         ))}
       </nav>
     </div>
+    </>
   );
 };
 
