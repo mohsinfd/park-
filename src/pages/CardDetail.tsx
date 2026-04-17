@@ -27,9 +27,9 @@ import type { FuelCard } from "@/types/card";
 //                   other spends, shopping, etc.) — overrides fuel detection
 // WELCOME_RE     — first-use / joining bonus
 
-const FUEL_SPEND_RE = /fuel\s*(station|spend|purchase|pump|bonus|point.*station)|petrol|diesel|indian.?oil|iocl|bpcl|hpcl|shell|surcharge|valueback.*fuel|fuel.*valueback/i;
+const FUEL_SPEND_RE = /fuel\s*(station|spend|purchase|pump|point.*station|saving)|petrol|diesel|indian.?oil|iocl|bpcl|hpcl|shell|surcharge|valueback.*fuel|fuel.*valueback|\bat\s+(indian|iocl|bpcl|hpcl|hp\s*pay|shell)/i;
 const NON_FUEL_CTX_RE = /\b(other\s*spend|non.?fuel|dining|restaurant|shopping|grocery|online\s*spend|offline\s*spend|everyday\s*spend|all\s*(other|non|card)\s*(spend|purchase))/i;
-const WELCOME_RE = /welcome|joining\s*bonus|first\s*(use|transact|spend)|sign.?up|activation\s*bonus/i;
+const WELCOME_RE = /welcome|joining\s*(bonus|benefit|gift|reward)|first\s*(use|transact|spend)|sign.?up|activation\s*(bonus|benefit)|bonus\s*(point|reward).*activat|on\s*(card\s*)?activat|on\s*annual\s*fee\s*payment/i;
 const SURCHARGE_RE = /surcharge/i;
 
 interface ParsedFeature { header: string; description: string; }
