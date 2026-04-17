@@ -68,8 +68,8 @@ function normalizeCalcCard(raw: any): FuelCard {
           ? [usp.header, usp.description].filter(Boolean).join(" — ")
           : null;
       if (str) {
-        // Deduplicate by normalised key (lowercase, collapse whitespace)
-        const key = str.toLowerCase().replace(/\s+/g, " ").trim();
+        // Deduplicate by normalised key (lowercase, collapse whitespace, strip punctuation)
+        const key = str.toLowerCase().replace(/[\s\t]+/g, " ").replace(/[^\w\s₹%]/g, "").trim();
         if (!seen.has(key)) { seen.add(key); features.push(str); }
       }
     }
