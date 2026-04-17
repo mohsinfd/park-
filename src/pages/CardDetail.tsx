@@ -19,8 +19,16 @@ import { feeWithGst } from "@/lib/calculator";
 import type { FuelCard } from "@/types/card";
 
 // ─── Feature classification ───────────────────────────────────────────────────
-// Regexes to classify a feature string as fuel-related or welcome/bonus
-const FUEL_RE    = /fuel|surcharge|petrol|diesel|indian.?oil|iocl|bpcl|hpcl|hp\s*fuel|shell|valueback/i;
+// A feature is a FUEL benefit only if it's about fuel-as-spend-category,
+// not just because it mentions "fuel points" as a reward currency.
+//
+// FUEL_SPEND_RE  — the feature is about purchasing fuel / at a fuel station
+// NON_FUEL_CTX_RE — the feature is about a different spend category (dining,
+//                   other spends, shopping, etc.) — overrides fuel detection
+// WELCOME_RE     — first-use / joining bonus
+
+const FUEL_SPEND_RE = /fuel\s*(station|spend|purchase|pump|bonus|point.*station)|petrol|diesel|indian.?oil|iocl|bpcl|hpcl|shell|surcharge|valueback.*fuel|fuel.*valueback/i;
+const NON_FUEL_CTX_RE = /\b(other\s*spend|non.?fuel|dining|restaurant|shopping|grocery|online\s*spend|offline\s*spend|everyday\s*spend|all\s*(other|non|card)\s*(spend|purchase))/i;
 const WELCOME_RE = /welcome|joining\s*bonus|first\s*(use|transact|spend)|sign.?up|activation\s*bonus/i;
 const SURCHARGE_RE = /surcharge/i;
 
@@ -41,9 +49,14 @@ function classifyFeatures(features: string[]): {
   const fuel: string[] = [];
   const other: string[] = [];
   for (const f of features) {
-    if (WELCOME_RE.test(f)) welcome.push(f);
-    else if (FUEL_RE.test(f)) fuel.push(f);
-    else other.push(f);
+    if (WELCOME_RE.test(f)) {
+      welcome.push(f);
+    } else if (FUEL_SPEND_RE.test(f) && !NON_FUEL_CTX_RE.test(f)) {
+      // Only fuel if it's about fuel spend, not about earning fuel points on dining/other
+      fuel.push(f);
+    } else {
+      other.push(f);
+    }
   }
   return { welcome, fuel, other };
 }
