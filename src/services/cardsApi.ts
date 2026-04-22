@@ -255,6 +255,12 @@ async function fetchEligibleCardsDirectly(params: DeepLinkParams): Promise<FuelC
     });
 
   console.log(`Merged: ${eligible.length} eligible cards (from ${calcCards.length} calc cards)`);
+
+  if (eligible.length === 0) {
+    console.warn("/cards alias match produced 0 results — falling back to all calc cards");
+    return calcCards;
+  }
+
   return eligible;
 }
 
