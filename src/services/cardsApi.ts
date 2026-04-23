@@ -94,7 +94,16 @@ function normalizeCalcCard(raw: any): FuelCard {
   // Keep them separate — the API provides both as distinct fields
   const joiningFee = parseFee(raw.joining_fees ?? raw.joining_fee_text ?? raw.joining_fee ?? 0);
   const annualFee  = parseFee(raw.annual_fee ?? raw.annual_fee_text ?? joiningFee);
-  const annualSaving = raw.total_savings_yearly ?? raw.annual_saving ?? 0;
+
+  // total_savings_yearly is the definitive annual figure; fall back to total_savings (monthly) * 12
+  const monthlySavings = parseFee(raw.total_savings ?? 0);
+  const annualSaving = parseFee(
+    raw.total_savings_yearly ?? raw.annual_saving ?? (monthlySavings > 0 ? monthlySavings * 12 : 0)
+  );
+
+  // roi from API = total_savings_yearly - joining_fees (pre-GST). Derive it when missing.
+  const roi = parseFee(raw.roi ?? (annualSaving > joiningFee ? annualSaving - joiningFee : 0));
+
   const alias = raw.seo_card_alias ?? raw.card_alias ?? "";
 
   return {
@@ -119,7 +128,7 @@ function normalizeCalcCard(raw: any): FuelCard {
     features,
     rewards: { online_spend: "0%", offline_spend: "0%" },
     brand_options: (raw.brand_options || []).filter((b: { spend_key: string }) => b.spend_key === "fuel").map((b: { brand: string }) => b.brand),
-    roi: raw.roi || 0,
+    roi,
     rating: raw.rating || 0,
     lounges: raw.lounges || 0,
   };
