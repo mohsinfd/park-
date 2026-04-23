@@ -55,14 +55,7 @@ function parseFee(val: unknown): number {
   return 0;
 }
 
-// ─── Normalise a raw /cards card ─────────────────────────────────────────────
-// /cards is the sole data source. Fields:
-//   annual_saving (string)  — API's pre-computed annual saving for the fuel slug
-//   joining_fee_text (string) — one-time year-1 fee
-//   annual_fee_text (string)  — recurring fee from year 2
-//   card_type (string)        — real network e.g. "VISA,Mastercard" (take first)
-//   network_url / cg_ek_url   — tracking / affiliate URL
-//   image / card_bg_image / card_bg_gradient — visuals
+// ─── Normalise a raw card from /calculate or /cards/:alias ───────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function normalizeCard(raw: any): FuelCard {
   // ── Features / USPs ──────────────────────────────────────────────────────
@@ -89,24 +82,31 @@ function normalizeCard(raw: any): FuelCard {
   if (features.length === 0) features.push(...(tags.length ? tags.map((t) => `${t} benefits`) : ["Credit card"]));
 
   // ── Fees ─────────────────────────────────────────────────────────────────
-  // joining_fee_text = one-time year-1 fee; annual_fee_text = recurring from year 2
-  const joiningFee = parseFee(raw.joining_fee_text ?? raw.joining_fees ?? raw.joining_fee ?? 0);
-  const annualFee  = parseFee(raw.annual_fee_text ?? raw.annual_fee ?? joiningFee);
+  // joining_fee_text / joining_fees = one-time year-1 fee
+  // annual_fee_text / annual_fee    = recurring fee from year 2
+  const joiningFee = parseFee(raw.joining_fees ?? raw.joining_fee_text ?? raw.joining_fee ?? 0);
+  const annualFee  = parseFee(raw.annual_fee ?? raw.annual_fee_text ?? joiningFee);
 
   // ── Savings ──────────────────────────────────────────────────────────────
-  // annual_saving is the slug-specific pre-computed saving from /cards
-  const annualSaving = parseFee(raw.annual_saving ?? raw.total_savings_yearly ?? 0);
-  const monthlySaving = Math.round(annualSaving / 12);
+  // /calculate returns total_savings (monthly) and total_savings_yearly
+  const monthlySavings  = parseFee(raw.total_savings ?? 0);
+  const annualSaving    = parseFee(raw.total_savings_yearly ?? (monthlySavings * 12));
+  const roi             = parseFee(raw.roi ?? 0);
 
-  // roi = net benefit after subtracting joining fee (no GST, matches BankKaro convention)
-  const roi = annualSaving > joiningFee ? annualSaving - joiningFee : 0;
+  // ── Fuel savings breakdown ────────────────────────────────────────────────
+  let fuelSavingsMonthly = 0;
+  if (Array.isArray(raw.spending_breakdown_array)) {
+    const e = raw.spending_breakdown_array.find((x: { on: string }) => x.on === "fuel");
+    if (e) fuelSavingsMonthly = e.savings || 0;
+  } else if (raw.spending_breakdown?.fuel) {
+    fuelSavingsMonthly = raw.spending_breakdown.fuel.savings || 0;
+  }
 
   // ── Network ──────────────────────────────────────────────────────────────
   // card_type from /cards = real payment network "VISA,Mastercard" — take first
   const rawNetwork: string = raw.card_type || "";
   const cardNetwork = rawNetwork.split(",")[0].trim();
 
-  // ── Alias ─────────────────────────────────────────────────────────────────
   const alias = raw.seo_card_alias ?? raw.card_alias ?? "";
 
   return {
@@ -118,14 +118,14 @@ function normalizeCard(raw: any): FuelCard {
     annual_fee: annualFee,
     joining_fee: joiningFee,
     card_network: cardNetwork,
-    tracking_url: raw.network_url || raw.cg_network_url || raw.cg_ek_url || "",
+    tracking_url: raw.cg_network_url || raw.network_url || raw.cg_ek_url || "",
     image_url: raw.image || raw.card_image_url || "",
     bg_image_url: raw.card_bg_image || "",
     bg_gradient: raw.card_bg_gradient || "",
     seo_card_alias: alias,
     annual_saving: annualSaving,
-    monthly_saving: monthlySaving,
-    fuel_savings_monthly: Math.round(monthlySaving), // best proxy without /calculate breakdown
+    monthly_saving: monthlySavings || Math.round(annualSaving / 12),
+    fuel_savings_monthly: fuelSavingsMonthly,
     tags,
     features,
     rewards: { online_spend: "0%", offline_spend: "0%" },
@@ -138,16 +138,30 @@ function normalizeCard(raw: any): FuelCard {
   };
 }
 
-// ─── /cards — single source of truth for fuel card listings ─────────────────
-// Always uses slug "best-fuel-credit-card".
-// Eligibility (pincode + inhandIncome + empStatus) is included when present.
-// Without empStatus the API returns "incomplete eligiblity data" — so we only
-// send eligiblityPayload when all three fields are present.
+// ─── /calculate — source of truth for savings & ranking ──────────────────────
+// Payload: just {"fuel": fuelSpend}. The API calculates savings for all cards.
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function fetchFromCardsEndpoint(token: string, params: DeepLinkParams): Promise<FuelCard[]> {
+async function fetchCalcCards(token: string, fuelSpend: number): Promise<FuelCard[]> {
+  const res = await fetch("/api/partner/cardgenius/calculate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "partner-token": token },
+    body: JSON.stringify({ fuel: fuelSpend }),
+  });
+  if (!res.ok) throw new Error(`/calculate failed: ${res.status}`);
+  const result = await res.json();
+  const savings = result?.data?.savings ?? result?.savings ?? [];
+  console.log(`/calculate → ${savings.length} cards`);
+  // Drop cards with zero or negative roi — not worth showing
+  return savings.map(normalizeCard).filter((c: FuelCard) => c.roi > 0);
+}
+
+// ─── /cards — eligibility filter ─────────────────────────────────────────────
+// Returns a Set of eligible seo_card_alias values. Used to filter calc results.
+// Requires pincode + inhandIncome + empStatus — if any missing, skip filtering.
+
+async function fetchEligibleAliases(token: string, params: DeepLinkParams): Promise<Set<string> | null> {
   const { fuel, pincode, inhandIncome, empStatus } = params;
-  const hasEligibility = Boolean(pincode && inhandIncome && empStatus);
+  if (!pincode || !inhandIncome || !empStatus) return null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: Record<string, any> = {
@@ -155,9 +169,7 @@ async function fetchFromCardsEndpoint(token: string, params: DeepLinkParams): Pr
     banks_ids: [], card_networks: [], annualFees: "",
     credit_score: "", sort_by: "annual_savings", free_cards: "",
     cardGeniusPayload: { tag_id: "1", fuel: String(fuel) },
-    eligiblityPayload: hasEligibility
-      ? { pincode, inhandIncome: String(inhandIncome), empStatus }
-      : {},
+    eligiblityPayload: { pincode, inhandIncome: String(inhandIncome), empStatus },
   };
 
   const res = await fetch("/api/partner/cardgenius/cards", {
@@ -166,22 +178,18 @@ async function fetchFromCardsEndpoint(token: string, params: DeepLinkParams): Pr
     body: JSON.stringify(payload),
   });
 
-  if (!res.ok) throw new Error(`/cards failed: ${res.status}`);
+  if (!res.ok) { console.warn(`/cards failed (${res.status})`); return null; }
 
   const result = await res.json();
-
-  if (result?.status === "error") {
-    throw new Error(result?.error?.message ?? result?.message ?? "/cards API error");
-  }
+  if (result?.status === "error") { console.warn("/cards error:", result?.error?.message); return null; }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const raw: any[] = Array.isArray(result?.data?.cards)
-    ? result.data.cards
-    : Array.isArray(result?.data) ? result.data
-    : [];
+  const raw: any[] = Array.isArray(result?.data?.cards) ? result.data.cards
+    : Array.isArray(result?.data) ? result.data : [];
 
-  console.log(`/cards → ${raw.length} fuel cards (eligibility=${hasEligibility})`);
-  return raw.map(normalizeCard);
+  const aliases = new Set(raw.map((c) => c.seo_card_alias || c.card_alias || "").filter(Boolean));
+  console.log(`/cards → ${aliases.size} eligible aliases`);
+  return aliases.size > 0 ? aliases : null;
 }
 
 // ─── Single card detail ───────────────────────────────────────────────────────
@@ -207,12 +215,21 @@ async function fetchCardDetailDirectly(alias: string): Promise<FuelCard> {
 
 export async function fetchFuelCards(monthlyFuelSpend: number = 5000): Promise<FuelCard[]> {
   const token = await getPartnerToken();
-  return fetchFromCardsEndpoint(token, { fuel: monthlyFuelSpend });
+  return fetchCalcCards(token, monthlyFuelSpend);
 }
 
 export async function fetchEligibleFuelCards(params: DeepLinkParams): Promise<FuelCard[]> {
   const token = await getPartnerToken();
-  return fetchFromCardsEndpoint(token, params);
+  const [calcCards, eligibleAliases] = await Promise.all([
+    fetchCalcCards(token, params.fuel),
+    fetchEligibleAliases(token, params),
+  ]);
+
+  if (!eligibleAliases) return calcCards;
+
+  const filtered = calcCards.filter(c => c.seo_card_alias && eligibleAliases.has(c.seo_card_alias));
+  console.log(`Eligible: ${filtered.length} of ${calcCards.length} calc cards`);
+  return filtered.length > 0 ? filtered : calcCards;
 }
 
 export async function fetchCardDetail(alias: string): Promise<FuelCard> {
