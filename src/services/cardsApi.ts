@@ -145,7 +145,15 @@ async function fetchCalcCards(token: string, fuelSpend: number): Promise<FuelCar
   const res = await fetch("/api/partner/cardgenius/calculate", {
     method: "POST",
     headers: { "Content-Type": "application/json", "partner-token": token },
-    body: JSON.stringify({ fuel: fuelSpend }),
+    body: JSON.stringify({
+      amazon_spends: 0, flipkart_spends: 0, other_online_spends: 0, other_offline_spends: 0,
+      grocery_spends_online: 0, online_food_ordering: 0, fuel: fuelSpend,
+      dining_or_going_out: 0, flights_annual: 0, hotels_annual: 0,
+      domestic_lounge_usage_quarterly: 0, international_lounge_usage_quarterly: 0,
+      mobile_phone_bills: 0, electricity_bills: 0, water_bills: 0,
+      insurance_health_annual: 0, insurance_car_or_bike_annual: 0,
+      life_insurance: 0, offline_grocery: 0, rent: 0, school_fees: 0,
+    }),
   });
   if (!res.ok) throw new Error(`/calculate failed: ${res.status}`);
   const result = await res.json();

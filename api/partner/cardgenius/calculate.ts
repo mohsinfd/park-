@@ -9,7 +9,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const upstream = await fetch("https://platform.bankkaro.com/partner/cardgenius/calculate", {
+    const upstream = await fetch("https://platform.bankkaro.com/partner/cardgenius/v2/calculate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
