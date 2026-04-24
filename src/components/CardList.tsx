@@ -55,7 +55,7 @@ const HeroCard = ({
   const handleViewDetails = () => {
     if (!card.seo_card_alias) return;
     navigate(`/card/${card.seo_card_alias}`, {
-      state: { source, monthlyFuelSpend, personalized },
+      state: { source, monthlyFuelSpend, personalized, annualSavingNet: card.annual_saving_net },
     });
   };
 
@@ -286,7 +286,7 @@ const RunnerUpCard = ({
   );
   const handleCardClick = () => {
     if (card.seo_card_alias) {
-      navigate(`/card/${card.seo_card_alias}`, { state: { source, monthlyFuelSpend, personalized } });
+      navigate(`/card/${card.seo_card_alias}`, { state: { source, monthlyFuelSpend, personalized, annualSavingNet: card.annual_saving_net } });
     }
   };
 
@@ -374,7 +374,7 @@ const CompactRow = ({
   const navigate = useNavigate();
   const handleClick = () => {
     if (card.seo_card_alias) {
-      navigate(`/card/${card.seo_card_alias}`, { state: { source, monthlyFuelSpend, personalized } });
+      navigate(`/card/${card.seo_card_alias}`, { state: { source, monthlyFuelSpend, personalized, annualSavingNet: card.annual_saving_net } });
     }
   };
 

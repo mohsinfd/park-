@@ -133,13 +133,13 @@ const CardHero = ({ card, personalized }: { card: FuelCard; personalized: boolea
 );
 
 // ─── Savings strip ────────────────────────────────────────────────────────────
-const SavingsStrip = ({ card, monthlyFuelSpend }: { card: FuelCard; monthlyFuelSpend: number }) => {
+const SavingsStrip = ({ card, monthlyFuelSpend, annualSavingNet }: { card: FuelCard; monthlyFuelSpend: number; annualSavingNet?: number }) => {
   const cashbackPct = monthlyFuelSpend > 0 && card.fuel_savings_monthly > 0
     ? (card.fuel_savings_monthly / monthlyFuelSpend) * 100 : 0;
-  const netSaving = card.roi > 0 ? card.roi : card.annual_saving - feeWithGst(card.annual_fee);
+  const netSaving = annualSavingNet;
 
   const tiles = [
-    { label: "Net Annual Saving", value: `+₹${netSaving.toLocaleString("en-IN")}`, highlight: true },
+    ...(netSaving !== undefined ? [{ label: "Net Annual Saving", value: `+₹${Math.round(netSaving).toLocaleString("en-IN")}`, highlight: true }] : []),
     { label: "Monthly Saving", value: `₹${card.monthly_saving.toLocaleString("en-IN")}`, highlight: false },
     ...(cashbackPct > 0 ? [{ label: "% Back on Fuel", value: `${cashbackPct.toFixed(1)}%`, highlight: false }] : []),
   ];
@@ -398,6 +398,7 @@ interface LocationState {
   source?: string;
   monthlyFuelSpend?: number;
   personalized?: boolean;
+  annualSavingNet?: number; // carried from /calculate results on the list page
 }
 
 const CardDetail = () => {
@@ -408,6 +409,7 @@ const CardDetail = () => {
   const source = state.source ?? "park_plus_fuel";
   const monthlyFuelSpend = state.monthlyFuelSpend ?? 0;
   const personalized = state.personalized ?? false;
+  const annualSavingNet = state.annualSavingNet; // undefined when navigated to directly
 
   const { data: card, isLoading, error } = useCardDetail(alias);
 
@@ -455,7 +457,7 @@ const CardDetail = () => {
       {/* ─── Content ─── */}
       <main className="max-w-md mx-auto pt-5 pb-36">
         <CardHero card={card} personalized={personalized} />
-        <SavingsStrip card={card} monthlyFuelSpend={monthlyFuelSpend} />
+        <SavingsStrip card={card} monthlyFuelSpend={monthlyFuelSpend} annualSavingNet={annualSavingNet} />
         <WelcomeOffer features={welcome} />
         <FuelBenefitsSection fuelFeatures={fuel} brandOptions={card.brand_options || []} />
         <OtherBenefits features={other} />
