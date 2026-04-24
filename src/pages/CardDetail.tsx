@@ -140,12 +140,13 @@ const SavingsStrip = ({ card, monthlyFuelSpend, annualSavingNet }: { card: FuelC
 
   const tiles = [
     ...(netSaving !== undefined ? [{ label: "Net Annual Saving", value: `+₹${Math.round(netSaving).toLocaleString("en-IN")}`, highlight: true }] : []),
-    { label: "Monthly Saving", value: `₹${card.monthly_saving.toLocaleString("en-IN")}`, highlight: false },
     ...(cashbackPct > 0 ? [{ label: "% Back on Fuel", value: `${cashbackPct.toFixed(1)}%`, highlight: false }] : []),
   ];
 
   return (
-    <div className={`mx-4 mb-5 grid gap-2 ${tiles.length === 3 ? "grid-cols-3" : "grid-cols-2"}`}>
+    if (tiles.length === 0) return null;
+  return (
+    <div className={`mx-4 mb-5 grid gap-2 ${tiles.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
       {tiles.map(({ label, value, highlight }) => (
         <div key={label} className={`rounded-2xl p-3 text-center border ${highlight ? "bg-primary/10 border-primary/20" : "bg-secondary border-border"}`}>
           <p className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{label}</p>
